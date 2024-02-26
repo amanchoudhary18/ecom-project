@@ -5,6 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="99120c21-dd7b-42c5-ac9d-dc2caee0ed00" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/menu-driven" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/thread-implementation/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/thread-implementation/out/production/Thread Implementation/ConcurrentPrimeAdder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/thread-implementation/out/production/Thread Implementation/PrimeAdder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/thread-implementation/out/production/Thread Implementation/TheadImplementation.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cart-service/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/cart-service/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/menu-driven/categories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/menu-driven/categories.txt" afterDir="false" />
@@ -25,6 +32,8 @@
       <change beforePath="$PROJECT_DIR$/menu-driven/src/services/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/menu-driven/src/services/ProductService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/menu-driven/src/services/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/menu-driven/src/services/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/order-service/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/order-service/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-service/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +129,7 @@
       <option name="presentableId" value="Default" />
       <updated>1708782417951</updated>
       <workItem from="1708782418893" duration="278000" />
-      <workItem from="1708921527169" duration="1220000" />
+      <workItem from="1708921527169" duration="1261000" />
     </task>
     <servers />
   </component>
