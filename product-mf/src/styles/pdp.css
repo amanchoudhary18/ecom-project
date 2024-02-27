@@ -1,0 +1,88 @@
+.pdp-side-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 7px;
+}
+
+.pdp-main-img {
+  width: 400px;
+  border-radius: 7px;
+}
+
+.pdp {
+  margin-top: 120px;
+}
+
+.pdp-details {
+  font-family: "Poppins";
+}
+
+.pdp-details .name {
+  font-family: "Poppins";
+  font-weight: 500;
+  font-size: 24px;
+  margin: 4px;
+}
+
+.pdp-details .text-muted {
+  font-size: 16px;
+  margin: 2px;
+}
+
+.pdp-details .price {
+  padding-top: 40px;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.pdp-details .description {
+  font-size: 14px;
+}
+
+.pdp-details .add-to-cart-btn {
+  background-color: black;
+  color: white;
+  border: none;
+  font-size: 16px;
+  width: 100%;
+  border-radius: 15px;
+}
+
+.pdp-details .wishlist-btn {
+  background-color: white;
+  color: black;
+  border: none;
+  font-size: 16px;
+  width: 100%;
+  border-radius: 15px;
+  border: 1px solid black;
+  margin: 0px;
+}
+
+@media screen and (min-width: 1600px) {
+  .pdp-side-img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .pdp-main-img {
+    width: 600px;
+    margin: 0px 25px;
+  }
+
+  .pdp-details .name {
+    font-size: 28px;
+  }
+
+  .pdp-details .text-muted {
+    font-size: 20px;
+  }
+
+  .pdp-details .price {
+    font-size: 32px;
+  }
+
+  .pdp-details .add-to-cart-btn {
+    font-size: 20px;
+  }
+}
