@@ -1,0 +1,22 @@
+.filter-categories {
+  font-family: "Poppins";
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.selected {
+  color: lightgrey;
+  font-size: 20px;
+}
+
+.filter-genders {
+  font-family: "Poppins";
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-gender {
+  font-family: "Poppins";
+  font-size: 16px;
+}

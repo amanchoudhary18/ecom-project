@@ -4,36 +4,28 @@ import "../styles/products.css";
 import Dropdown from "../components/Dropdown";
 import PDP from "./PDP";
 import axios from "axios";
+import Filters from "../components/Filters/Filters";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [showFilters, setShowFilters] = useState(true);
 
-  const [genders, setGenders] = useState([
-    { name: "Men" },
-    { name: "Women" },
-    { name: "Unisex" },
-  ]);
-
-  const [selectedCategory, setSelectedCategory] = useState();
-  const [selectedGender, setSelectedGender] = useState();
-
-  const fetchAllCategories = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8060/products/categories"
-      );
-
-      setCategories(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [filterState, setFilterState] = useState({
+    categoryId: "",
+    gender: "",
+    minPrice: 0,
+    maxPrice: 100000,
+  });
 
   const fetchAllProducts = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8060/products/products"
+        "http://localhost:8060/products/products",
+        {
+          params: {
+            categoryId: filterState.categoryId,
+          },
+        }
       );
 
       setProducts(response.data);
@@ -42,45 +34,41 @@ const Products = () => {
     }
   };
 
+  const toggleFilter = () => {
+    setShowFilters((prevState) => !prevState);
+  };
+
   useEffect(() => {
-    fetchAllCategories();
     fetchAllProducts();
-  }, []);
+  }, [filterState]);
 
   return (
     <div className="container-fluid">
-      <div className="hero">
-        <p className="title display-5 text-center mt-4">
-          Step Up Your Style, discover your perfect pair
-        </p>
-        <p className="mt-0 text-center text-muted">
-          Crafted for confidence. Experience superior comfort and effortless
-          style, one step at a time.
-        </p>
+      <div className="d-flex flex-row justify-content-end gap-4 my-5">
+        <div className="pe-4">
+          <button onClick={toggleFilter}>Filters</button>
+        </div>
       </div>
 
-      <div className="d-flex flex-row justify-content-center gap-4 my-5">
-        {/* Category filter */}
-        <Dropdown
-          values={categories}
-          setFilterValue={setSelectedCategory}
-          filterValue={selectedCategory}
-        />
-
-        {/* Gender filter */}
-        <Dropdown
-          values={genders}
-          setFilterValue={setSelectedGender}
-          filterValue={selectedGender}
-        />
-      </div>
-
-      <div className="d-flex justify-content-center flex-wrap">
-        {products.map((product) => (
-          <div key={product.id} className="py-2 px-4">
-            <ProductCard product={product} />
+      <div className="row">
+        {showFilters && (
+          <div className="col-3 slide-in-left">
+            <Filters
+              filterState={filterState}
+              setFilterState={setFilterState}
+            />
           </div>
-        ))}
+        )}
+
+        <div className={`${showFilters ? "col-9" : "col-12"}`}>
+          <div className="d-flex justify-content-start flex-wrap">
+            {products.map((product) => (
+              <div key={product.id} className="py-2 px-4">
+                <ProductCard product={product} showFilters={showFilters} />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

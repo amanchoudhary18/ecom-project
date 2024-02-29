@@ -16,6 +16,10 @@ module.exports = (_, argv) => ({
     historyApiFallback: true,
   },
 
+  optimization: {
+    runtimeChunk: "single",
+  },
+
   module: {
     rules: [
       {
@@ -35,6 +39,14 @@ module.exports = (_, argv) => ({
         use: {
           loader: "babel-loader",
         },
+      },
+      {
+        test: /\.(png|jpe?g|gif|webp)$/i,
+        use: [
+          {
+            loader: "file-loader",
+          },
+        ],
       },
     ],
   },

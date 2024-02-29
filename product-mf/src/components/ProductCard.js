@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/product-card.css";
 import { useNavigate } from "react-router-dom";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, showFilters }) => {
   const navigate = useNavigate();
 
   const navigateToPDP = () => {
@@ -10,8 +10,8 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="card product-card border-0" onClick={navigateToPDP}>
-      <div className="product-card-img">
+    <div className={`card product-card border-0 `} onClick={navigateToPDP}>
+      <div className={`product-card-img `}>
         <img
           src={
             product.imgLinks[0] ||
