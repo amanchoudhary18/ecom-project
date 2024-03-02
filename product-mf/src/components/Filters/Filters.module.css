@@ -1,3 +1,8 @@
+.filters {
+  position: sticky;
+  top: 90px;
+}
+
 .filter-categories {
   font-family: "Poppins";
   font-size: 16px;
@@ -13,10 +18,15 @@
   font-family: "Poppins";
   font-size: 20px;
   font-weight: 600;
-  cursor: pointer;
 }
 
 .filter-gender {
   font-family: "Poppins";
   font-size: 16px;
+}
+
+.price input {
+  width: 100px;
+  border: 1px solid black;
+  border-radius: 7px;
 }

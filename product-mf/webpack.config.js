@@ -14,10 +14,8 @@ module.exports = (_, argv) => ({
   devServer: {
     port: 3001,
     historyApiFallback: true,
-  },
-
-  optimization: {
-    runtimeChunk: "single",
+    liveReload: true,
+    hot: false,
   },
 
   module: {

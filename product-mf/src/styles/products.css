@@ -10,7 +10,7 @@
 }
 
 .slide-in-left {
-  animation: slideInLeft 0.5s ease forwards;
+  animation: slideInLeft 0.3s ease forwards;
 }
 
 @keyframes slideInLeft {
@@ -19,5 +19,27 @@
   }
   to {
     transform: translateX(0);
+  }
+}
+
+.filter-button {
+  border: none;
+  font-size: 16px;
+  padding: 8px 25px;
+  border-radius: 15px;
+  background-color: white;
+  font-family: "Poppins";
+  font-weight: 500;
+}
+
+.skeleton-img {
+  width: 300px;
+  height: 250px;
+}
+
+@media screen and (min-width: 1600px) {
+  .skeleton-img {
+    width: 420px;
+    height: 325px;
   }
 }

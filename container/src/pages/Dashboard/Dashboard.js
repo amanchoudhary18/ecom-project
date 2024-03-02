@@ -41,8 +41,10 @@ const Dashboard = () => {
     }
   };
 
-  const navigateToProducts = () => {
-    navigate(`/products`);
+  const navigateToProducts = (categoryId) => {
+    navigate(`/products`, {
+      state: { categoryId: categoryId, showFilters: true },
+    });
   };
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const Dashboard = () => {
         const nextIndex = (currentIndex + 1) % shoes.length;
         return shoes[nextIndex];
       });
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -109,7 +111,7 @@ const Dashboard = () => {
       </div>
 
       {/* Collection */}
-      <div className="pt-5container-fluid ">
+      <div className="pt-5 container-fluid ">
         <div className={`pt-5 mx-5 ${styles.players}`}>
           <p>Our Collections</p>
         </div>
@@ -127,7 +129,7 @@ const Dashboard = () => {
                 </p>
                 <div className={`${styles["category-card-overlay"]}`}></div>
                 <div className={`${styles["category-card-button"]}`}>
-                  <button onClick={navigateToProducts}>
+                  <button onClick={() => navigateToProducts(category.id)}>
                     Explore <i className="ps-2 bi bi-arrow-right"></i>
                   </button>
                 </div>

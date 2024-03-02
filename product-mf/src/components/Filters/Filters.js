@@ -23,7 +23,7 @@ const Filters = ({ filterState, setFilterState }) => {
   }, []);
 
   return (
-    <div className="ms-3 container-fluid">
+    <div className={`ms-3 mt-2 container-fluid ${styles.filters}`}>
       {/* Categories */}
       <div>
         <div>
@@ -65,13 +65,78 @@ const Filters = ({ filterState, setFilterState }) => {
           {["Men", "Women", "Unisex"].map((gender, index) => (
             <div className="my-2 form-check">
               <input
-                className="form-check-input"
+                className={`form-check-input`}
                 type="checkbox"
-                value=""
+                value={gender}
+                checked={filterState.gender.includes(gender)}
                 id="flexCheckChecked"
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setFilterState({
+                      ...filterState,
+                      gender: [...filterState.gender, e.target.value],
+                    });
+                  } else {
+                    setFilterState({
+                      ...filterState,
+                      gender: filterState.gender.filter(
+                        (val) => val !== e.target.value
+                      ),
+                    });
+                  }
+                }}
               />
               <label className={`${styles["filter-gender"]} form-check-label`}>
                 {gender}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Price range */}
+      <div className="mt-5">
+        <div>
+          <p className={`${styles["filter-genders"]}`}>Price Range</p>
+        </div>
+
+        <div>
+          <input
+            className={`form-check-input`}
+            type="radio"
+            name="priceRange"
+            value={{}}
+            onChange={() => {
+              setFilterState({ ...filterState, priceRange: {} });
+            }}
+            defaultChecked
+          />
+          <label className={`ms-2 ${styles["filter-gender"]} form-check-label`}>
+            All Prices
+          </label>
+          {[
+            { min: 2501, max: 7500 },
+            { min: 7501, max: 12999 },
+            { min: 13000 },
+          ].map((range, index) => (
+            <div className="my-2 form-check">
+              <input
+                className={`form-check-input`}
+                type="radio"
+                name="priceRange"
+                value={range}
+                onChange={() => {
+                  setFilterState({ ...filterState, priceRange: range });
+                }}
+              />
+              <label className={`${styles["filter-gender"]} form-check-label`}>
+                {!range.max
+                  ? " > " + "₹ " + range.min.toLocaleString("en-IN")
+                  : "₹ " +
+                    range.min.toLocaleString("en-IN") +
+                    " - " +
+                    "₹ " +
+                    range.max.toLocaleString("en-IN")}
               </label>
             </div>
           ))}
