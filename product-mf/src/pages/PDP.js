@@ -6,6 +6,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { toast } from "react-toastify";
 import Confetti from "react-confetti";
+import { anonymousAddToCart } from "../utils/cartFunctions";
 
 const PDP = () => {
   const params = useParams();
@@ -62,11 +63,11 @@ const PDP = () => {
       console.log(response);
       toast.success(response.data.message);
 
-      setConfetti(true);
+      // setConfetti(true);
 
-      setTimeout(() => {
-        setConfetti(false);
-      }, 5000);
+      // setTimeout(() => {
+      //   setConfetti(false);
+      // }, 5000);
     } catch (error) {
       if (error.response) {
         toast.error(error.data.response.message);
@@ -78,7 +79,7 @@ const PDP = () => {
 
   useEffect(() => {
     fetchProduct(localStorage.getItem("token") || "");
-  }, []);
+  }, [params]);
 
   return (
     <div className="container-fluid">
@@ -175,8 +176,12 @@ const PDP = () => {
             <button
               className="mt-5 py-3 add-to-cart-btn"
               onClick={() => {
-                if (!localStorage.getItem("token")) navigate("/login");
-                else addToCart(localStorage.getItem("token"));
+                // setDropdown(true);
+                if (localStorage.getItem("token"))
+                  addToCart(localStorage.getItem("token"));
+                else {
+                  anonymousAddToCart(product.id, 1);
+                }
               }}
             >
               Add to cart

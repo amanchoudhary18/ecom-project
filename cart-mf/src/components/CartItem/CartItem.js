@@ -1,0 +1,116 @@
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import "./CartItem.css";
+import { useNavigate } from "react-router-dom";
+import isUserLoggedIn from "../../utils/isUserLoggedIn";
+import { anonymousAddToCart } from "../../utils/cartFunctions";
+import { toast } from "react-toastify";
+
+const CartItem = ({ cartItem, fetchCartData }) => {
+  const navigate = useNavigate();
+
+  const handleAddToCart = async () => {
+    const token = isUserLoggedIn();
+    if (!token) {
+      anonymousAddToCart(cartItem.id, 1);
+    } else {
+      try {
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+
+        const addToCartBody = {
+          productId: cartItem.id,
+          quantity: 1,
+        };
+
+        const response = await axios.post(
+          `http://localhost:8090/cart/addToCart`,
+          addToCartBody,
+          config
+        );
+
+        console.log(response);
+      } catch (error) {
+        if (error.response) {
+          toast.error(error.data.response.message);
+        } else {
+          toast.error(error.message);
+        }
+      }
+    }
+
+    console.log("fetch");
+    fetchCartData();
+  };
+
+  const handleRemoveFromCart = async () => {
+    const token = isUserLoggedIn();
+    if (!token) {
+      anonymousRemoveFromCart(cartItem.id, 1);
+    } else {
+      try {
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+
+        const addToCartBody = {
+          productId: cartItem.id,
+          quantity: 1,
+        };
+
+        const response = await axios.post(
+          `http://localhost:8090/cart/removeFromCart`,
+          addToCartBody,
+          config
+        );
+
+        console.log(response);
+      } catch (error) {
+        if (error.response) {
+          toast.error(error.data.response.message);
+        } else {
+          toast.error(error.message);
+        }
+      }
+    }
+    fetchCartData();
+  };
+
+  return (
+    <div className="row cart-item">
+      <div className="row col-8">
+        <div className="col-4">
+          <img
+            src={cartItem.imgLinks && cartItem?.imgLinks[0]}
+            className="cart-item-img"
+            onClick={() => {
+              navigate(`/products/${cartItem.id}`);
+              setDropdown(false);
+            }}
+          />
+        </div>
+        <div className="col-8">
+          <p className="cart-item-name m-0 my-2 p-0">{cartItem?.name}</p>
+          <p className="cart-item-quantity">Men's Category</p>
+          <p className="cart-item-quantity m-0 p-0 my-1">
+            <button onClick={handleAddToCart}>
+              <i class="bi bi-plus"></i>
+            </button>
+            <span className="mx-2">{cartItem?.quantity}</span>
+
+            <button onClick={handleRemoveFromCart}>
+              <i class="bi bi-dash"></i>
+            </button>
+          </p>
+        </div>
+      </div>
+
+      <div className="col-3 mt-2">
+        <p className="cart-item-price">
+          MRP : ₹ {cartItem?.price?.toLocaleString("en-IN")}
+        </p>
+      </div>
+
+      <hr className="mt-4" />
+    </div>
+  );
+};
+
+export default CartItem;

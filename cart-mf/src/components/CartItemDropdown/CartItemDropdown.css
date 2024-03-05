@@ -1,0 +1,20 @@
+.cart-item-dropdown-img {
+    width: 80px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.cart-item-dropdown-name {
+    font-family: "Poppins";
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.cart-item-dropdown-quantity {
+    font-size: 12px;
+}
+
+.cart-item-dropdown-price {
+    font-size: 14px;
+    font-weight: 500;
+}

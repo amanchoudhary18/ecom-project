@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import "../styles/products.css";
 import axios from "axios";
@@ -9,20 +9,18 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import NotFound from "../components/NotFound/NotFound";
 import { useLocation } from "react-router-dom";
+import SearchBar from "../components/Searchbar/Searchbar";
+import FilterContext from "../context/FilterContext";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [showGif, setShowGif] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const location = useLocation();
 
-  const [filterState, setFilterState] = useState({
-    categoryId: "",
-    gender: [],
-    priceRange: {},
-  });
+  const { filterState, setFilterState } = useContext(FilterContext);
 
   const fetchAllProducts = async () => {
     try {
@@ -34,6 +32,7 @@ const Products = () => {
             categoryId: filterState.categoryId,
             minPrice: filterState.priceRange.min,
             maxPrice: filterState.priceRange.max,
+            keyword: filterState.keyword,
           },
         }
       );
@@ -71,7 +70,11 @@ const Products = () => {
 
   return (
     <div className="container-fluid">
-      <div className="d-flex flex-row justify-content-end gap-4 mb-5">
+      <div className="d-flex flex-row justify-content-end gap-4 mb-5 search-filter">
+        <div>
+          <SearchBar />
+        </div>
+
         <div className="pe-4">
           <button onClick={toggleFilter} className="filter-button">
             {showFilters ? "Hide" : "Show"} Filters
@@ -100,15 +103,7 @@ const Products = () => {
         )}
 
         <div className={`${showFilters ? "col-9" : "col-12"}`}>
-          {loading ? (
-            <div className="d-flex justify-content-start flex-wrap">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
-                <div key={index} className="py-2 px-4 skeleton-img">
-                  <Skeleton width="100%" height="100%" />
-                </div>
-              ))}
-            </div>
-          ) : products.length > 0 ? (
+          {products.length > 0 || loading ? (
             <div className="d-flex justify-content-start flex-wrap">
               {products.map((product) => (
                 <div key={product.id} className="py-2 px-4">

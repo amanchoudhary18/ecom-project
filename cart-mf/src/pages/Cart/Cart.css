@@ -1,0 +1,23 @@
+.cart-items {
+    border-radius: 15px;
+}
+
+.cart-summary .title {
+    font-size: 20px;
+    font-family: "Poppins";
+    font-weight: 500;
+}
+
+.cart-summary-final {
+    font-weight: 500;
+}
+
+.cart-checkout-btn {
+    font-family: "Poppins";
+    background-color: black;
+    color: white;
+    border: none;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 15px;
+}

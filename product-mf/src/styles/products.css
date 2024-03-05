@@ -3,6 +3,12 @@
   font-weight: 500;
 }
 
+.search-filter {
+  padding-top: 10px;
+  z-index: 1;
+  background-color: white;
+}
+
 .filter {
   background-color: #f2f2f2;
   min-width: 120px;
@@ -17,6 +23,7 @@
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
