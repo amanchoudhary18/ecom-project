@@ -4,6 +4,7 @@ import Products from "./pages/Products";
 import PDP from "./pages/PDP";
 import { ToastContainer } from "react-toastify";
 import FilterContext from "./context/FilterContext";
+import ProductManagement from "./pages/ProductManagement";
 
 const ProductRouter = () => {
   const [filterState, setFilterState] = useState({
@@ -13,12 +14,26 @@ const ProductRouter = () => {
     keyword: "",
   });
 
+  const ProtectedRoute = ({ element, isAdmin, ...props }) => {
+    console.log(isAdmin);
+    return isAdmin ? element : <Navigate to="/" />;
+  };
+
   return (
     <FilterContext.Provider value={{ filterState, setFilterState }}>
       <ToastContainer />
       <Routes>
         <Route path="/" element={<Products />} />
         <Route path="/:id" element={<PDP />} />
+        <Route
+          path="/product-management"
+          element={
+            <ProtectedRoute
+              element={<ProductManagement />}
+              isAdmin={localStorage.getItem("isAdmin") === "true"}
+            />
+          }
+        />
       </Routes>
     </FilterContext.Provider>
   );

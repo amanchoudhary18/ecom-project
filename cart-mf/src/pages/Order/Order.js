@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import OrderItem from "../../components/OrderItem/OrderItem";
 import Address from "../../components/Address/Address";
 import PaymentMethod from "../../components/PaymentMethod/PaymentMethod";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import Confetti from "react-confetti";
 
 const Order = () => {
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ const Order = () => {
 
   const [selectedAddress, setSelectedAddress] = useState();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState();
+
+  const [delivery, setDelivery] = useState(false);
+  const [confetti, setConfetti] = useState(false);
 
   const fetchCartData = async () => {
     const userToken = isUserLoggedIn();
@@ -83,10 +87,10 @@ const Order = () => {
     }
   };
 
-  //   function formatDate(date) {
-  //     const options = { day: "numeric", month: "short" };
-  //     return new Intl.DateTimeFormat("en-IN", options).format(date);
-  //   }
+  function formatDate(date) {
+    const options = { day: "numeric", month: "short" };
+    return new Intl.DateTimeFormat("en-IN", options).format(date);
+  }
 
   const fetchAddress = async () => {
     try {
@@ -156,10 +160,17 @@ const Order = () => {
         config
       );
 
-      await axios.get("http://localhost:8090/cart/clearCart", config);
+      const clearCartResponse = await axios.get(
+        "http://localhost:8090/cart/clearCart",
+        config
+      );
 
-      toast.success(response.data.message);
-      navigate("/profile");
+      setDelivery(true);
+
+      setConfetti(true);
+      setTimeout(() => {
+        setConfetti(false);
+      }, 5000);
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -176,160 +187,219 @@ const Order = () => {
 
   return (
     <div className="container-fluid mt-5 px-0">
-      <div className="row mx-5">
-        <div className="col-8 order-items">
-          <div className="mb-5 me-3">
-            <div className="d-flex flex-row justify-content-between">
-              <p className="title m-0 p-0">Select your address</p>
-              <i
-                class={`bi bi-chevron-${
-                  orderState.addressDropdown ? "up" : "down"
-                }`}
-                role="button"
-                onClick={() =>
-                  setOrderState((prevState) => ({
-                    ...prevState,
-                    addressDropdown: !orderState.addressDropdown,
-                  }))
-                }
-              ></i>
-            </div>
-            <div className="order-address ">
-              {!orderState.addressDropdown ? (
-                <Address address={selectedAddress} selected={true} />
-              ) : (
-                orderState.addresses.map((address) => (
-                  <div
-                    onClick={() => {
-                      setSelectedAddress(address);
+      {!delivery ? (
+        <>
+          <div className="row mx-5">
+            <div className="col-8 order-items">
+              <div className="mb-5 me-3">
+                <div className="d-flex flex-row justify-content-between">
+                  <p className="title m-0 p-0">Select your address</p>
+                  <i
+                    class={`bi bi-chevron-${
+                      orderState.addressDropdown ? "up" : "down"
+                    }`}
+                    role="button"
+                    onClick={() =>
                       setOrderState((prevState) => ({
                         ...prevState,
                         addressDropdown: !orderState.addressDropdown,
-                      }));
-                    }}
-                  >
-                    <Address
-                      address={address}
-                      selected={selectedAddress?.id === address.id}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+                      }))
+                    }
+                  ></i>
+                </div>
+                <div className="order-address ">
+                  {!orderState.addressDropdown ? (
+                    <Address address={selectedAddress} selected={true} />
+                  ) : (
+                    orderState.addresses.map((address) => (
+                      <div
+                        onClick={() => {
+                          setSelectedAddress(address);
+                          setOrderState((prevState) => ({
+                            ...prevState,
+                            addressDropdown: !orderState.addressDropdown,
+                          }));
+                        }}
+                      >
+                        <Address
+                          address={address}
+                          selected={selectedAddress?.id === address.id}
+                        />
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
 
-          <div className="mb-5">
-            <div className="d-flex flex-row justify-content-between">
-              <p className="title m-0 p-0">Select your payment method</p>
-              <i
-                class={`bi bi-chevron-${
-                  orderState.paymentMethodDropdown ? "up" : "down"
-                }`}
-                role="button"
-                onClick={() =>
-                  setOrderState((prevState) => ({
-                    ...prevState,
-                    paymentMethodDropdown: !orderState.paymentMethodDropdown,
-                  }))
-                }
-              ></i>
-            </div>
-            <div className="order-address ">
-              {!orderState.paymentMethodDropdown ? (
-                <PaymentMethod
-                  paymentMethod={selectedPaymentMethod}
-                  selected={true}
-                />
-              ) : (
-                orderState.paymentMethods.map((paymentMethod) => (
-                  <div
-                    onClick={() => {
-                      setSelectedPaymentMethod(paymentMethod);
+              <div className="mb-5">
+                <div className="d-flex flex-row justify-content-between">
+                  <p className="title m-0 p-0">Select your payment method</p>
+                  <i
+                    class={`bi bi-chevron-${
+                      orderState.paymentMethodDropdown ? "up" : "down"
+                    }`}
+                    role="button"
+                    onClick={() =>
                       setOrderState((prevState) => ({
                         ...prevState,
                         paymentMethodDropdown:
                           !orderState.paymentMethodDropdown,
-                      }));
-                    }}
-                  >
-                    <PaymentMethod
-                      paymentMethod={paymentMethod}
-                      selected={selectedPaymentMethod?.id === paymentMethod.id}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-        {orderState.cartData.length > 0 && (
-          <div className="order-summary col-4">
-            <p className="title">Order Summary</p>
-            {[
-              {
-                name: "Subtotal Price",
-                value: orderState.cartData?.reduce((total, item) => {
-                  return total + item.price * item.quantity;
-                }, 0),
-              },
-
-              {
-                name: "Tax + Handling Charges",
-                value:
-                  orderState.cartData?.reduce((total, item) => {
-                    return total + item.price * item.quantity;
-                  }, 0) * 0.1,
-              },
-            ].map((data) => (
-              <div className="d-flex flex-row justify-content-between order-summary-items">
-                <p>{data.name}</p>
-                <p>
-                  ₹ {parseFloat(data.value.toFixed(2)).toLocaleString("en-IN")}
-                </p>
-              </div>
-            ))}
-
-            <hr />
-            {[
-              {
-                name: "Total Price",
-                value:
-                  orderState.cartData?.reduce((total, item) => {
-                    return total + item.price * item.quantity;
-                  }, 0) * 1.1,
-              },
-            ].map((data) => (
-              <div className="d-flex flex-row justify-content-between pt-2">
-                <p className="order-summary-final">{data.name}</p>
-                <p className="order-summary-final">
-                  ₹ {parseFloat(data.value.toFixed(2)).toLocaleString("en-IN")}
-                </p>
-              </div>
-            ))}
-            <hr />
-
-            <div className="order-item-list">
-              {orderState.cartData?.length > 0 ? (
-                orderState.cartData.map((orderItem) => (
-                  <div className="my-3">
-                    <OrderItem orderItem={orderItem} />
-                  </div>
-                ))
-              ) : (
-                <div className="d-flex justify-content-center font-bold">
-                  Your cart seems empty :(
+                      }))
+                    }
+                  ></i>
                 </div>
-              )}
+                <div className="order-address ">
+                  {!orderState.paymentMethodDropdown ? (
+                    <PaymentMethod
+                      paymentMethod={selectedPaymentMethod}
+                      selected={true}
+                    />
+                  ) : (
+                    orderState.paymentMethods.map((paymentMethod) => (
+                      <div
+                        onClick={() => {
+                          setSelectedPaymentMethod(paymentMethod);
+                          setOrderState((prevState) => ({
+                            ...prevState,
+                            paymentMethodDropdown:
+                              !orderState.paymentMethodDropdown,
+                          }));
+                        }}
+                      >
+                        <PaymentMethod
+                          paymentMethod={paymentMethod}
+                          selected={
+                            selectedPaymentMethod?.id === paymentMethod.id
+                          }
+                        />
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+            {orderState.cartData.length > 0 && (
+              <div className="order-summary col-4">
+                <p className="title">Order Summary</p>
+                {[
+                  {
+                    name: "Subtotal Price",
+                    value: orderState.cartData?.reduce((total, item) => {
+                      return total + item.price * item.quantity;
+                    }, 0),
+                  },
+
+                  {
+                    name: "Tax + Handling Charges",
+                    value:
+                      orderState.cartData?.reduce((total, item) => {
+                        return total + item.price * item.quantity;
+                      }, 0) * 0.1,
+                  },
+                ].map((data) => (
+                  <div className="d-flex flex-row justify-content-between order-summary-items">
+                    <p>{data.name}</p>
+                    <p>
+                      ₹{" "}
+                      {parseFloat(data.value.toFixed(2)).toLocaleString(
+                        "en-IN"
+                      )}
+                    </p>
+                  </div>
+                ))}
+
+                <hr />
+                {[
+                  {
+                    name: "Total Price",
+                    value:
+                      orderState.cartData?.reduce((total, item) => {
+                        return total + item.price * item.quantity;
+                      }, 0) * 1.1,
+                  },
+                ].map((data) => (
+                  <div className="d-flex flex-row justify-content-between pt-2">
+                    <p className="order-summary-final">{data.name}</p>
+                    <p className="order-summary-final">
+                      ₹{" "}
+                      {parseFloat(data.value.toFixed(2)).toLocaleString(
+                        "en-IN"
+                      )}
+                    </p>
+                  </div>
+                ))}
+                <hr />
+              </div>
+            )}
+          </div>
+          <div className="checkout py-3 d-flex flex-row justify-content-end border border-top pe-5">
+            <button className="btn btn-dark btn-md" onClick={createOrder}>
+              Proceed to Checkout
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="container-fluid d-flex justify-content-center">
+          {confetti && (
+            <Confetti
+              width={window.innerWidth * 0.95}
+              height={window.innerHeight}
+            />
+          )}
+          <div className="delivery-card card">
+            <div className="card-title my-4">
+              <div className="d-flex flex-row justify-content-center">
+                <p>
+                  Congratulations !! Your order has been successfully placed
+                </p>
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-2"></div>
+                <div className="col-4 pt-3">
+                  <p>
+                    Your items will be delivered by{" "}
+                    <span className="delivery-date">
+                      {formatDate(new Date().setDate(new Date().getDate() + 7))}
+                    </span>
+                  </p>
+
+                  <button
+                    className="btn btn-sm btn-dark mt-1"
+                    onClick={() => navigate("/products")}
+                  >
+                    Continue Shopping
+                  </button>
+                </div>
+
+                <div className="col-4 pt-2">
+                  <div className="order-item-list">
+                    {orderState.cartData?.length > 0 ? (
+                      orderState.cartData.map((orderItem, i) => (
+                        <div className="my-3">
+                          <OrderItem orderItem={orderItem} />
+
+                          {i !== orderState.cart?.length - 1 && (
+                            <hr className="mt-4" />
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="d-flex justify-content-center font-bold">
+                        Your cart seems empty :(
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="col-2"></div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
-
-      <div className="checkout py-3 d-flex flex-row justify-content-end border border-top pe-5">
-        <button className="btn btn-dark btn-md" onClick={createOrder}>
-          Proceed to Checkout
-        </button>
-      </div>
+          <div className="d-flex flex-row justify-content-center"></div>
+        </div>
+      )}
     </div>
   );
 };

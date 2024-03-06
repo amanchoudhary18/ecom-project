@@ -52,7 +52,29 @@ module.exports = (_, argv) => ({
       name: "container",
       filename: "remoteEntry.js",
       remotes: {
-        product_mf: "product_mf@http://localhost:3001/remoteEntry.js",
+        product_mf: `promise new Promise((resolve, reject) => {
+    const remoteUrlWithVersion = 'http://localhost:3001/remoteEntry.js';
+    const script = document.createElement('script');
+    script.src = remoteUrlWithVersion;
+    script.onerror = (err) => {
+        script.parentElement?.removeChild(script);
+        reject(err);
+    };
+    script.onload = () => {
+      const proxy = {
+        get: (request) => window.product_mf.get(request),
+        init: (arg) => {
+          try {
+            return window.product_mf.init(arg)
+          } catch(e) {
+            console.log('remote container already initialized')
+          }
+        }
+      }
+      resolve(proxy)
+    };
+    document.head.appendChild(script);
+  })`,
         cart_mf: "cart_mf@http://localhost:3002/remoteEntry.js",
       },
       exposes: {},

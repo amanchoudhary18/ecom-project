@@ -29,8 +29,6 @@ const OrderItem = ({ orderItem }) => {
           </p>
         </div>
       </div>
-
-      <hr className="mt-4" />
     </div>
   );
 };

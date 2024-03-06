@@ -58,3 +58,11 @@
     background-color: white;
     width: 100%;
 }
+
+.delivery-card {
+    width: 1000px;
+}
+
+.delivery-date {
+    color: green;
+}

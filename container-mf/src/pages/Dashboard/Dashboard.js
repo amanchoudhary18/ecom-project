@@ -16,6 +16,7 @@ import famous3 from "../../assets/famous-3.png";
 import about from "../../assets/nike-cartoon.png";
 
 import axios from "axios";
+import isAdmin from "../../utils/isAdmin";
 
 const Dashboard = () => {
   const navigate = useNavigate();

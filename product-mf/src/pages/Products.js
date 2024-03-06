@@ -5,7 +5,6 @@ import axios from "axios";
 import Filters from "../components/Filters/Filters";
 import filterGif from "../assets/filter.gif";
 import filterIcon from "../assets/filter.png";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import NotFound from "../components/NotFound/NotFound";
 import { useLocation } from "react-router-dom";
