@@ -18,6 +18,7 @@ export default function Breadcrumbs() {
       return response.data.product.name;
     } catch (error) {
       console.log(error);
+      return "";
     }
   };
 

@@ -7,6 +7,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { toast } from "react-toastify";
 import Confetti from "react-confetti";
 import { anonymousAddToCart } from "../utils/cartFunctions";
+import ErrorComponent from "../components/ErrorComponent/ErrorComponent";
 
 const PDP = () => {
   const params = useParams();
@@ -16,6 +17,8 @@ const PDP = () => {
   const [selectedImgLink, setSelectedImgLink] = useState();
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState(false);
+
   const [confetti, setConfetti] = useState(false);
 
   const handleMouseOver = (link) => {
@@ -24,6 +27,7 @@ const PDP = () => {
   };
 
   const fetchProduct = async (token) => {
+    setError(null);
     try {
       setLoading(true);
       const productId = params.id;
@@ -35,10 +39,11 @@ const PDP = () => {
         config
       );
 
-      console.log(response.data.product);
+      console.log(response);
       setProduct(response.data.product);
       setSelectedImgLink(response.data.product.imgLinks[1]);
     } catch (error) {
+      setError(error);
       console.log(error);
     } finally {
       setLoading(false);
@@ -82,114 +87,121 @@ const PDP = () => {
   }, [params]);
 
   return (
-    <div className="container-fluid">
-      {confetti && (
-        <Confetti
-          width={window.innerWidth * 0.95}
-          height={window.innerHeight}
-        />
-      )}
-
-      {loading ? (
-        <div className="pdp row mx-5">
-          <div className="col-md-7">
-            <div className="row">
-              <div className="col-md-1"></div>
-              <div className="col-md-1"></div>
-              <div className="col-md-1">
-                {[1, 2, 3, 4, 5].map(() => (
-                  <div className={`pdp-side-img my-2`}>
-                    <Skeleton width="100%" height="100%" />
+    <>
+      {error ? (
+        <ErrorComponent status={error.response?.status} />
+      ) : (
+        <div className="container-fluid">
+          {loading ? (
+            <div className="pdp row mx-5">
+              <div className="col-md-7">
+                <div className="row">
+                  <div className="col-md-1"></div>
+                  <div className="col-md-1"></div>
+                  <div className="col-md-1">
+                    {[1, 2, 3, 4, 5].map(() => (
+                      <div className={`pdp-side-img my-2`}>
+                        <Skeleton width="100%" height="100%" />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <div className="col-md-9 px-5 py-2">
-                <div className="pdp-main-img-skeleton">
-                  <Skeleton width="100%" height="100%" />
+                  <div className="col-md-9 px-5 py-2">
+                    <div className="pdp-main-img-skeleton">
+                      <Skeleton width="100%" height="100%" />
+                    </div>
+                  </div>
                 </div>
               </div>
+              <div className="pdp-details col-md-4 col-xl-3">
+                <p className="name">
+                  <Skeleton width="300px" height="30px" />
+                </p>
+                <p className="text-muted">
+                  <Skeleton width="200px" height="30px" />
+                </p>
+
+                <p className="price">
+                  <Skeleton width="400px" height="60px" />
+                </p>
+
+                <p className="description">
+                  <Skeleton width="400px" height="20px" count={5} />
+                </p>
+
+                <Skeleton width="400px" height="30px" />
+              </div>
             </div>
-          </div>
-          <div className="pdp-details col-md-4 col-xl-3">
-            <p className="name">
-              <Skeleton width="300px" height="30px" />
-            </p>
-            <p className="text-muted">
-              <Skeleton width="200px" height="30px" />
-            </p>
-
-            <p className="price">
-              <Skeleton width="400px" height="60px" />
-            </p>
-
-            <p className="description">
-              <Skeleton width="400px" height="20px" count={5} />
-            </p>
-
-            <Skeleton width="400px" height="30px" />
-          </div>
-        </div>
-      ) : (
-        <div className="pdp row mx-5">
-          <div className="col-md-7">
-            <div className="row">
-              <div className="col-md-1"></div>
-              <div className="col-md-1"></div>
-              <div className="col-md-1">
-                {product?.imgLinks?.map(
-                  (link, index) =>
-                    index >= 1 && (
-                      <img
-                        src={link}
-                        alt="product"
-                        className={`pdp-side-img my-2 ${
-                          link === selectedImgLink ? "opacity-50" : ""
-                        }`}
-                        onMouseOver={(e) => handleMouseOver(link)}
-                      />
-                    )
+          ) : (
+            <div className="pdp row mx-5">
+              <div className="col-md-7">
+                <div className="row">
+                  <div className="col-md-1"></div>
+                  <div className="col-md-1"></div>
+                  <div className="col-md-1">
+                    {product?.imgLinks?.map(
+                      (link, index) =>
+                        index >= 1 && (
+                          <img
+                            src={link}
+                            alt="product"
+                            className={`pdp-side-img my-2 ${
+                              link === selectedImgLink ? "opacity-50" : ""
+                            }`}
+                            onMouseOver={(e) => handleMouseOver(link)}
+                          />
+                        )
+                    )}
+                  </div>
+                  <div className="col-md-9 px-5 py-2">
+                    <img
+                      src={selectedImgLink}
+                      alt="product"
+                      className="pdp-main-img"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="pdp-details col-md-4 col-xl-3">
+                {product?.quantity === 0 && (
+                  <p className="out-of-stock">
+                    This product is currently out of stock.
+                  </p>
                 )}
-              </div>
-              <div className="col-md-9 px-5 py-2">
-                <img
-                  src={selectedImgLink}
-                  alt="product"
-                  className="pdp-main-img"
-                />
+                <p className="name">{product?.name}</p>
+                <p className="text-muted">
+                  {product?.category?.gender === "Unisex"
+                    ? product?.category?.gender
+                    : product?.category?.gender + "'s category"}
+                </p>
+
+                <p className="price">
+                  MRP : ₹ {product?.price?.toLocaleString("en-IN")}
+                </p>
+
+                <p className="description">{product?.description}</p>
+
+                <button
+                  className={`mt-5 py-3 add-to-cart-btn ${
+                    product?.quantity === 0 ? "out-of-stock-btn" : ""
+                  }`}
+                  onClick={() => {
+                    // setDropdown(true);
+                    if (localStorage.getItem("token"))
+                      addToCart(localStorage.getItem("token"));
+                    else {
+                      anonymousAddToCart(product.id, 1);
+                    }
+                  }}
+                  disabled={product?.quantity === 0}
+                >
+                  Add to cart
+                </button>
               </div>
             </div>
-          </div>
-          <div className="pdp-details col-md-4 col-xl-3">
-            <p className="name">{product?.name}</p>
-            <p className="text-muted">
-              {product?.category?.gender === "Unisex"
-                ? product?.category?.gender
-                : product?.category?.gender + "'s category"}
-            </p>
-
-            <p className="price">
-              MRP : ₹ {product?.price?.toLocaleString("en-IN")}
-            </p>
-
-            <p className="description">{product?.description}</p>
-
-            <button
-              className="mt-5 py-3 add-to-cart-btn"
-              onClick={() => {
-                // setDropdown(true);
-                if (localStorage.getItem("token"))
-                  addToCart(localStorage.getItem("token"));
-                else {
-                  anonymousAddToCart(product.id, 1);
-                }
-              }}
-            >
-              Add to cart
-            </button>
-          </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

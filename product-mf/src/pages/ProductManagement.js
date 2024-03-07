@@ -9,6 +9,7 @@ import Modal from "../components/Modal/Modal";
 
 import FormComponent from "../components/FormComponent/FormComponent";
 import * as Yup from "yup";
+import ErrorComponent from "../components/ErrorComponent/ErrorComponent";
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -21,7 +22,12 @@ const ProductManagement = () => {
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState();
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const fetchAllProducts = async () => {
+    setLoading(true);
+    setError(null);
     const userToken = isUserLoggedIn();
 
     if (!userToken) {
@@ -37,13 +43,10 @@ const ProductManagement = () => {
 
       setProducts(response.data);
     } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(error.message);
-      }
-      console.log(error);
+      setError(error);
     }
+
+    setLoading(false);
   };
 
   const updateProduct = async (values) => {
@@ -194,52 +197,64 @@ const ProductManagement = () => {
   }, []);
 
   return (
-    <div>
-      <ToastContainer />
+    <>
+      {error ? (
+        <ErrorComponent status={error.response?.status} />
+      ) : (
+        <>
+          {loading ? (
+            <div className="loader mx-auto mt-5"></div>
+          ) : (
+            <div>
+              <ToastContainer />
 
-      <div className="mx-4 border border-1">
-        <DataTable
-          columns={columns}
-          data={products}
-          pagination={products.length > 10}
-          striped={true}
-          highlightOnHover
-          responsive
-        />
-      </div>
+              <div className="mx-4 border border-1">
+                <DataTable
+                  columns={columns}
+                  data={products}
+                  pagination={products.length > 10}
+                  striped={true}
+                  highlightOnHover
+                  responsive
+                />
+              </div>
 
-      <Modal
-        modalState={modalState}
-        setModalState={setModalState}
-        onSubmit={() => {}}
-        id={"editProductModal"}
-        hideFooter={true}
-      >
-        <div>
-          <FormComponent
-            fields={productEditFields}
-            initialValues={{
-              name: selectedRow?.name || "",
-              quantity: selectedRow?.quantity || "",
-            }}
-            validationSchema={productValidationSchema}
-            onSubmit={(values, { setSubmitting, resetForm }) => {
-              updateProduct(values);
-              setSubmitting(false);
-              resetForm();
+              <Modal
+                modalState={modalState}
+                setModalState={setModalState}
+                onSubmit={() => {}}
+                id={"editProductModal"}
+                hideFooter={true}
+              >
+                <div>
+                  <FormComponent
+                    fields={productEditFields}
+                    initialValues={{
+                      name: selectedRow?.name || "",
+                      quantity: selectedRow?.quantity || "",
+                    }}
+                    validationSchema={productValidationSchema}
+                    onSubmit={(values, { setSubmitting, resetForm }) => {
+                      updateProduct(values);
+                      setSubmitting(false);
+                      resetForm();
 
-              document
-                .getElementById("editProductModal")
-                .classList.toggle("show");
-              document
-                .getElementsByClassName("modal-backdrop")[0]
-                .classList.toggle("show");
-            }}
-            cols={2}
-          />
-        </div>
-      </Modal>
-    </div>
+                      document
+                        .getElementById("editProductModal")
+                        .classList.toggle("show");
+                      document
+                        .getElementsByClassName("modal-backdrop")[0]
+                        .remove();
+                    }}
+                    cols={2}
+                  />
+                </div>
+              </Modal>
+            </div>
+          )}
+        </>
+      )}
+    </>
   );
 };
 

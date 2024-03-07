@@ -10,12 +10,14 @@ import NotFound from "../components/NotFound/NotFound";
 import { useLocation } from "react-router-dom";
 import SearchBar from "../components/Searchbar/Searchbar";
 import FilterContext from "../context/FilterContext";
+import ErrorComponent from "../components/ErrorComponent/ErrorComponent";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(true);
   const [showGif, setShowGif] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const location = useLocation();
 
@@ -24,6 +26,7 @@ const Products = () => {
   const fetchAllProducts = async () => {
     try {
       setLoading(true);
+      setError(null);
       const response = await axios.get(
         "http://localhost:8060/products/products",
         {
@@ -39,6 +42,7 @@ const Products = () => {
       setProducts(response.data);
     } catch (error) {
       console.log(error);
+      setError(error);
     } finally {
       setLoading(false);
     }
@@ -59,8 +63,6 @@ const Products = () => {
       gender: location.state?.gender || [],
       categoryId: location.state?.categoryId || "",
     }));
-
-    setShowFilters(location.state?.showFilters || false);
   }, [location]);
 
   useEffect(() => {
@@ -68,54 +70,74 @@ const Products = () => {
   }, [filterState]);
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex flex-row justify-content-end gap-4 mb-5 search-filter">
-        <div>
-          <SearchBar />
-        </div>
-
-        <div className="pe-4">
-          <button onClick={toggleFilter} className="filter-button">
-            {showFilters ? "Hide" : "Show"} Filters
-            {showGif ? (
-              <img
-                className="ms-2"
-                src={filterGif}
-                alt="Filtering"
-                width="25px"
-              />
-            ) : (
-              <img className="ms-2" src={filterIcon} alt="icon" width="25px" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      <div className="row">
-        {showFilters && (
-          <div className="col-3 slide-in-left">
-            <Filters
-              filterState={filterState}
-              setFilterState={setFilterState}
-            />
-          </div>
-        )}
-
-        <div className={`${showFilters ? "col-9" : "col-12"}`}>
-          {products.length > 0 || loading ? (
-            <div className="d-flex justify-content-start flex-wrap">
-              {products.map((product) => (
-                <div key={product.id} className="py-2 px-4">
-                  <ProductCard product={product} showFilters={showFilters} />
-                </div>
-              ))}
-            </div>
+    <>
+      {error ? (
+        <ErrorComponent status={error.response?.status} />
+      ) : (
+        <>
+          {loading ? (
+            <div className="loader mx-auto mt-5"></div>
           ) : (
-            <NotFound />
+            <div className="container-fluid">
+              <div className="d-flex flex-row justify-content-end gap-4 mb-5 search-filter">
+                <div>
+                  <SearchBar />
+                </div>
+
+                <div className="pe-4">
+                  <button onClick={toggleFilter} className="filter-button">
+                    {showFilters ? "Hide" : "Show"} Filters
+                    {showGif ? (
+                      <img
+                        className="ms-2"
+                        src={filterGif}
+                        alt="Filtering"
+                        width="25px"
+                      />
+                    ) : (
+                      <img
+                        className="ms-2"
+                        src={filterIcon}
+                        alt="icon"
+                        width="25px"
+                      />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="row">
+                {showFilters && (
+                  <div className="col-3 slide-in-left">
+                    <Filters
+                      filterState={filterState}
+                      setFilterState={setFilterState}
+                    />
+                  </div>
+                )}
+
+                <div className={`${showFilters ? "col-9" : "col-12"}`}>
+                  {products.length > 0 || loading ? (
+                    <div className="d-flex justify-content-start flex-wrap">
+                      {products.map((product) => (
+                        <div key={product.id} className="py-2 px-4">
+                          <ProductCard
+                            product={product}
+                            showFilters={showFilters}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <NotFound />
+                  )}
+                </div>
+              </div>
+            </div>
           )}
-        </div>
-      </div>
-    </div>
+        </>
+      )}
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import * as Yup from "yup";
 import axios from "axios";
 import { mergeCart } from "../../utils/cartFunctions";
@@ -14,8 +14,8 @@ const Login = () => {
   const { user, setUser } = useContext(UserContext);
 
   const fields = [
-    { name: "email", label: "Email Address", type: "email" },
-    { name: "password", label: "Password", type: "password" },
+    { name: "email", label: "Email Address *", type: "email" },
+    { name: "password", label: "Password *", type: "password" },
   ];
 
   const initialValues = { email: "", password: "" };
@@ -63,6 +63,7 @@ const Login = () => {
 
   return (
     <div className="container-fluid row">
+      <ToastContainer />
       <div className="login-img col-6">
         <img
           src="https://content.fortune.com/wp-content/uploads/2016/08/nike_app_athletes.jpg?w=1440&q=75"

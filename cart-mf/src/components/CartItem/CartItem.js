@@ -38,26 +38,25 @@ const CartItem = ({ cartItem, fetchCartData }) => {
       }
     }
 
-    console.log("fetch");
     fetchCartData();
   };
 
-  const handleRemoveFromCart = async () => {
+  const handleRemoveFromCart = async (number) => {
     const token = isUserLoggedIn();
     if (!token) {
-      anonymousRemoveFromCart(cartItem.id, 1);
+      anonymousRemoveFromCart(cartItem.id, number);
     } else {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
-        const addToCartBody = {
+        const removeFromCartBody = {
           productId: cartItem.id,
-          quantity: 1,
+          quantity: number,
         };
 
         const response = await axios.post(
           `http://localhost:8090/cart/removeFromCart`,
-          addToCartBody,
+          removeFromCartBody,
           config
         );
 
@@ -75,7 +74,11 @@ const CartItem = ({ cartItem, fetchCartData }) => {
 
   return (
     <div className="row cart-item">
-      <div className="row col-8">
+      <div
+        className={`row col-8 ${
+          cartItem.quantity === 0 ? "out-of-stock-full" : ""
+        }`}
+      >
         <div className="col-4">
           <img
             src={cartItem.imgLinks && cartItem?.imgLinks[0]}
@@ -90,22 +93,49 @@ const CartItem = ({ cartItem, fetchCartData }) => {
           <p className="cart-item-name m-0 my-2 p-0">{cartItem?.name}</p>
           <p className="cart-item-quantity">Men's Category</p>
           <p className="cart-item-quantity m-0 p-0 my-1">
-            <button onClick={handleAddToCart}>
+            <button
+              disabled={cartItem.quantity === 0}
+              onClick={handleAddToCart}
+            >
               <i class="bi bi-plus"></i>
             </button>
-            <span className="mx-2">{cartItem?.quantity}</span>
+            <span className="mx-2">{cartItem?.cartQuantity}</span>
 
-            <button onClick={handleRemoveFromCart}>
+            <button
+              disabled={cartItem.quantity === 0}
+              onClick={() => handleRemoveFromCart(1)}
+            >
               <i class="bi bi-dash"></i>
             </button>
           </p>
+
+          {cartItem.quantity === 0 && (
+            <p className="cart-item-quantity m-0 p-0 mt-2 out-of-stock">
+              Out of stock
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="col-3 mt-2">
+      <div
+        className={`col-3 mt-2 d-flex justify-content-end ${
+          cartItem.quantity === 0 ? "out-of-stock-full" : ""
+        }`}
+      >
         <p className="cart-item-price">
           MRP : ₹ {cartItem?.price?.toLocaleString("en-IN")}
         </p>
+      </div>
+
+      <div className="row">
+        <div className="col-10"></div>
+        <div className="col-2">
+          <i
+            className="bi bi-trash h6 ps-3"
+            role="button"
+            onClick={() => handleRemoveFromCart(cartItem.cartQuantity)}
+          ></i>
+        </div>
       </div>
 
       <hr className="mt-4" />

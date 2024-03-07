@@ -16,7 +16,7 @@ import UserContext from "./context/UserContext.js";
 import Login from "./pages/Login/Login.js";
 import UserManagement from "./pages/UserManagement.js/UserManagement.js";
 import ErrorComponent from "./components/ErrorComponent/ErrorComponent.js";
-import { ErrorBoundary } from "react-error-boundary";
+import ErrorBoundary from "./components/ErrorBoundary.js";
 
 const ProductRouter = React.lazy(() => import("product_mf/ProductRouter"));
 const CartRouter = React.lazy(() => import("cart_mf/CartRouter"));
@@ -36,40 +36,33 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <UserContext.Provider value={{ user, setUser }}>
-        <div className="pb-5">
-          <Header />
-        </div>
+      <Suspense fallback={<div>Loading..</div>}>
+        <UserContext.Provider value={{ user, setUser }}>
+          <div className="pb-5">
+            <Header />
+          </div>
 
-        <Breadcrumbs />
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route
-            path="/user-management"
-            element={
-              <ProtectedRoute element={<UserManagement />} isAdmin={isAdmin} />
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route
-            path="/products/*"
-            element={
-              <ErrorBoundary fallback={<ErrorComponent />}>
-                <ProductRouter />
-              </ErrorBoundary>
-            }
-          />
-          <Route
-            path="/cart/*"
-            element={
-              <ErrorBoundary fallback={<ErrorComponent />}>
-                <CartRouter />
-              </ErrorBoundary>
-            }
-          />
-        </Routes>
-      </UserContext.Provider>
+          <Breadcrumbs />
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route
+              path="/user-management"
+              element={
+                <ProtectedRoute
+                  element={<UserManagement />}
+                  isAdmin={isAdmin}
+                />
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/products/*" element={<ProductRouter />} />
+            <Route path="/cart/*" element={<CartRouter />} />
+
+            <Route path="*" element={<ErrorComponent status={404} />} />
+          </Routes>
+        </UserContext.Provider>
+      </Suspense>
     </BrowserRouter>
   );
 };

@@ -17,10 +17,14 @@ import about from "../../assets/nike-cartoon.png";
 
 import axios from "axios";
 import isAdmin from "../../utils/isAdmin";
+import ErrorComponent from "../../components/ErrorComponent/ErrorComponent";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
 
   const shoes = [
     { name: "COMFORT", color: "#8f1ca3", img: shoe1 },
@@ -32,14 +36,18 @@ const Dashboard = () => {
 
   const fetchAllCategories = async () => {
     try {
+      setLoading(true);
+      setError();
       const response = await axios.get(
         "http://localhost:8060/products/categories"
       );
       console.log(response.data);
       setCategories(response.data);
     } catch (error) {
+      setError(error);
       console.log(error);
     }
+    setLoading(false);
   };
 
   const navigateToProducts = (categoryId) => {
@@ -112,32 +120,46 @@ const Dashboard = () => {
       </div>
 
       {/* Collection */}
+
       <div className="pt-5 container-fluid ">
         <div className={`pt-5 mx-5 ${styles.players}`}>
           <p>Our Collections</p>
         </div>
-        <div className="d-flex flex-wrap justify-content-around py-5">
-          {categories.map((category, index) => (
-            <div key={category.id} className={`py-3`}>
-              <div className={`${styles["category-card"]}`}>
-                <img
-                  src={category.imgLink}
-                  alt="category"
-                  className={`${styles["category-card-img"]} rounded`}
-                />
-                <p className={`${styles["category-card-title"]}`}>
-                  {category.name}
-                </p>
-                <div className={`${styles["category-card-overlay"]}`}></div>
-                <div className={`${styles["category-card-button"]}`}>
-                  <button onClick={() => navigateToProducts(category.id)}>
-                    Explore <i className="ps-2 bi bi-arrow-right"></i>
-                  </button>
-                </div>
+
+        {error ? (
+          <ErrorComponent status={error.response?.data} />
+        ) : (
+          <>
+            {loading ? (
+              <div className="loader mx-auto mt-3"></div>
+            ) : (
+              <div className="d-flex flex-wrap justify-content-around py-5">
+                {categories.map((category, index) => (
+                  <div key={category.id} className={`py-3`}>
+                    <div className={`${styles["category-card"]}`}>
+                      <img
+                        src={category.imgLink}
+                        alt="category"
+                        className={`${styles["category-card-img"]} rounded`}
+                      />
+                      <p className={`${styles["category-card-title"]}`}>
+                        {category.name}
+                      </p>
+                      <div
+                        className={`${styles["category-card-overlay"]}`}
+                      ></div>
+                      <div className={`${styles["category-card-button"]}`}>
+                        <button onClick={() => navigateToProducts(category.id)}>
+                          Explore <i className="ps-2 bi bi-arrow-right"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Athletes */}

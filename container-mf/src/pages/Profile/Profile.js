@@ -26,7 +26,12 @@ const Profile = () => {
 
   const [orders, setOrders] = useState([]);
 
+  const [orderError, setOrderError] = useState();
+  const [loading, setLoading] = useState(false);
+
   const fetchOrders = async () => {
+    setOrderError(null);
+    setLoading(true);
     const userToken = isUserLoggedIn();
 
     if (!userToken) {
@@ -44,8 +49,12 @@ const Profile = () => {
 
       setOrders(response.data.orders);
     } catch (error) {
+      setDisplay("Addresses");
+      setOrderError(error);
       console.log(error);
     }
+
+    setLoading(false);
   };
 
   const addAddress = async (address) => {
@@ -273,95 +282,120 @@ const Profile = () => {
         />
       </div>
 
-      <div className="d-flex flex-row gap-2 mt-5">
-        <button
-          type="button"
-          className={`btn btn-${
-            display === "Orders" ? "dark" : "light"
-          } btn-sm px-3`}
-          onClick={() => setDisplay("Orders")}
-        >
-          Orders
-        </button>
-
-        <button
-          type="button"
-          className={`btn btn-${
-            display === "Addresses" ? "dark" : "light"
-          } btn-sm px-3`}
-          onClick={() => setDisplay("Addresses")}
-        >
-          Addresses
-        </button>
-
-        <button
-          type="button"
-          className={`btn btn-${
-            display === "Payment Methods" ? "dark" : "light"
-          } btn-sm px-3`}
-          onClick={() => setDisplay("Payment Methods")}
-        >
-          Payment Methods
-        </button>
-      </div>
-
-      <div className="row mt-5">
-        {display === "Orders" && (
-          <div className="mt-2">
-            {orders
-              ?.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
-              .map((order) => (
-                <Order order={order} />
-              ))}
-          </div>
-        )}
-        {display === "Addresses" && (
-          <div className="mt-2">
-            {user?.addresses.map((address) => (
-              <Address address={address} fetchUserData={fetchUserData} />
-            ))}
+      {loading ? (
+        <div className="loader mx-auto mt-3"></div>
+      ) : (
+        <div>
+          <div className="d-flex flex-row gap-2 mt-5">
+            {orderError ? (
+              <button
+                type="button"
+                className={`btn btn-${
+                  display === "Orders" ? "dark" : "light"
+                } btn-sm px-3`}
+                onClick={() => setDisplay("Orders")}
+                disabled={true}
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Currently not available"
+              >
+                Orders
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={`btn btn-${
+                  display === "Orders" ? "dark" : "light"
+                } btn-sm px-3`}
+                onClick={() => setDisplay("Orders")}
+              >
+                Orders
+              </button>
+            )}
 
             <button
-              className="btn btn-sm btn-light my-3"
-              data-toggle="modal"
-              data-target="#addressModal"
-              onClick={() =>
-                setModalState((prevState) => ({
-                  ...prevState,
-                  label: "Add address",
-                }))
-              }
+              type="button"
+              className={`btn btn-${
+                display === "Addresses" ? "dark" : "light"
+              } btn-sm px-3`}
+              onClick={() => setDisplay("Addresses")}
             >
-              <i className="bi bi-plus"></i> Add Address
+              Addresses
             </button>
-          </div>
-        )}
-
-        {display === "Payment Methods" && (
-          <div className="mt-2">
-            {user?.paymentMethods.map((paymentMethod) => (
-              <PaymentMethod
-                paymentMethod={paymentMethod}
-                fetchUserData={fetchUserData}
-              />
-            ))}
 
             <button
-              className="btn btn-sm btn-light my-3"
-              data-toggle="modal"
-              data-target="#paymentMethodModal"
-              onClick={() =>
-                setModalState((prevState) => ({
-                  ...prevState,
-                  label: "Add payment method",
-                }))
-              }
+              type="button"
+              className={`btn btn-${
+                display === "Payment Methods" ? "dark" : "light"
+              } btn-sm px-3`}
+              onClick={() => setDisplay("Payment Methods")}
             >
-              <i className="bi bi-plus"></i> Add Payment Method
+              Payment Methods
             </button>
           </div>
-        )}
-      </div>
+
+          <div className="row mt-5">
+            {display === "Orders" && (
+              <div className="mt-2">
+                {orders
+                  ?.sort(
+                    (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
+                  )
+                  .map((order) => (
+                    <Order order={order} />
+                  ))}
+              </div>
+            )}
+
+            {display === "Addresses" && (
+              <div className="mt-2">
+                {user?.addresses.map((address) => (
+                  <Address address={address} fetchUserData={fetchUserData} />
+                ))}
+
+                <button
+                  className="btn btn-sm btn-light my-3"
+                  data-toggle="modal"
+                  data-target="#addressModal"
+                  onClick={() =>
+                    setModalState((prevState) => ({
+                      ...prevState,
+                      label: "Add address",
+                    }))
+                  }
+                >
+                  <i className="bi bi-plus"></i> Add Address
+                </button>
+              </div>
+            )}
+
+            {display === "Payment Methods" && (
+              <div className="mt-2">
+                {user?.paymentMethods.map((paymentMethod) => (
+                  <PaymentMethod
+                    paymentMethod={paymentMethod}
+                    fetchUserData={fetchUserData}
+                  />
+                ))}
+
+                <button
+                  className="btn btn-sm btn-light my-3"
+                  data-toggle="modal"
+                  data-target="#paymentMethodModal"
+                  onClick={() =>
+                    setModalState((prevState) => ({
+                      ...prevState,
+                      label: "Add payment method",
+                    }))
+                  }
+                >
+                  <i className="bi bi-plus"></i> Add Payment Method
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <Modal
         modalState={modalState}

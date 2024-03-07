@@ -74,20 +74,12 @@ const Header = () => {
           <div className="col-lg-5 d-flex flex-content-start gap-4 header-links">
             <p onClick={() => navigate("/")}>Home</p>
             <p>
-              <a
-                onClick={() =>
-                  navigate("/products", {
-                    state: { showFilters: true },
-                  })
-                }
-              >
-                All Products
-              </a>
+              <a onClick={() => navigate("/products")}>All Products</a>
             </p>
             <p
               onClick={() =>
                 navigate("/products", {
-                  state: { gender: ["Men"], showFilters: true },
+                  state: { gender: ["Men"] },
                 })
               }
             >
@@ -96,7 +88,7 @@ const Header = () => {
             <p
               onClick={() =>
                 navigate("/products", {
-                  state: { gender: ["Women"], showFilters: true },
+                  state: { gender: ["Women"] },
                 })
               }
             >
@@ -105,15 +97,7 @@ const Header = () => {
           </div>
         )}
         <div className="col-lg-3 header-profile d-flex flex-row ">
-          <ErrorBoundary
-            fallback={
-              <div>
-                <img src={cart} alt="cart" className="cart-img me-4" />
-              </div>
-            }
-          >
-            <CartDropdown dropdown={dropdown} setDropdown={setDropdown} />
-          </ErrorBoundary>
+          <CartDropdown dropdown={dropdown} setDropdown={setDropdown} />
 
           {isUserLoggedIn() ? (
             <img

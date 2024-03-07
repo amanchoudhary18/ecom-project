@@ -101,3 +101,14 @@
     font-size: 20px;
   }
 }
+
+.pdp-details .out-of-stock {
+  color: red;
+  font-size: 12px;
+  opacity: 1;
+  font-weight: 500;
+}
+
+.out-of-stock-btn {
+  opacity: 0.5;
+}

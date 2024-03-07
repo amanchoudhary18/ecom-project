@@ -66,3 +66,7 @@
 .delivery-date {
     color: green;
 }
+
+.order-item-list {
+    padding-bottom: 50px;
+}
