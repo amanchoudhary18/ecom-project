@@ -17,9 +17,22 @@ import Login from "./pages/Login/Login.js";
 import UserManagement from "./pages/UserManagement.js/UserManagement.js";
 import ErrorComponent from "./components/ErrorComponent/ErrorComponent.js";
 import ErrorBoundary from "./components/ErrorBoundary.js";
+import Signup from "./pages/Signup/Signup.js";
+import Footer from "./components/Footer/Footer.js";
 
-const ProductRouter = React.lazy(() => import("product_mf/ProductRouter"));
-const CartRouter = React.lazy(() => import("cart_mf/CartRouter"));
+const ProductRouter = React.lazy(() =>
+  import("product_mf/ProductRouter").catch(() => {
+    console.error("Failed to load ProductRouter");
+    return { default: () => <ErrorComponent /> };
+  })
+);
+
+const CartRouter = React.lazy(() =>
+  import("cart_mf/CartRouter").catch(() => {
+    console.error("Failed to load CartRouter");
+    return { default: () => <ErrorComponent /> };
+  })
+);
 
 const App = () => {
   const [user, setUser] = useState();
@@ -36,12 +49,13 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <Suspense fallback={<div>Loading..</div>}>
-        <UserContext.Provider value={{ user, setUser }}>
-          <div className="pb-5">
-            <Header />
-          </div>
+      <ToastContainer autoClose={3000} theme="dark" />
+      <UserContext.Provider value={{ user, setUser }}>
+        <div className="pb-5">
+          <Header />
+        </div>
 
+        <div className="app-content mb-5">
           <Breadcrumbs />
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -55,14 +69,34 @@ const App = () => {
               }
             />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Signup />} />
+
             <Route path="/profile" element={<Profile />} />
-            <Route path="/products/*" element={<ProductRouter />} />
-            <Route path="/cart/*" element={<CartRouter />} />
+            <Route
+              path="/products/*"
+              element={
+                <Suspense fallback={<div className="loader"></div>}>
+                  <ProductRouter />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/cart/*"
+              element={
+                <Suspense fallback={<div className="loader"></div>}>
+                  <CartRouter />
+                </Suspense>
+              }
+            />
 
             <Route path="*" element={<ErrorComponent status={404} />} />
           </Routes>
-        </UserContext.Provider>
-      </Suspense>
+        </div>
+
+        <div className="footer">
+          <Footer />
+        </div>
+      </UserContext.Provider>
     </BrowserRouter>
   );
 };

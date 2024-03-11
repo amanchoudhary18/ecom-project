@@ -37,9 +37,12 @@ const Order = ({ order }) => {
 
       <div>
         <div className="order-item-list">
-          {order.orderItems.map((orderItem) => (
-            <div className="">
+          {order.orderItems.map((orderItem, index) => (
+            <div className="order-item-list-item">
               <OrderItem orderItem={orderItem} orderDate={order?.orderDate} />
+              {index !== order?.orderItems?.length - 1 && (
+                <hr className="my-2" />
+              )}
             </div>
           ))}
         </div>

@@ -9,23 +9,32 @@ import { anonymousAddToCart } from "../utils/cartFunctions";
 
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
+import Modal from "../components/Modal/Modal";
 
 const ProductCard = ({ product, showFilters }) => {
   const navigate = useNavigate();
 
   const [isHovered, setIsHovered] = useState(false);
 
+  const [modalState, setModalState] = useState({
+    label: "",
+    data: [],
+  });
+
   const navigateToPDP = () => {
     navigate(`/products/${product.id}`);
   };
 
-  const addToCart = async (token) => {
+  const [selectedSize, setSelectedSize] = useState(4);
+
+  const addToCart = async (token, size) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       const addToCartBody = {
         productId: product.id,
         quantity: 1,
+        size: size + " UK",
       };
 
       const response = await axios.post(
@@ -48,24 +57,23 @@ const ProductCard = ({ product, showFilters }) => {
       className={`card product-card border-0 ${
         product.quantity === 0 ? "out-of-stock-full" : ""
       }`}
-      onClick={navigateToPDP}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      <div
-        className="cart-icon"
-        role="button"
-        onClick={(e) => {
-          e.stopPropagation();
-
-          if (isUserLoggedIn()) addToCart(isUserLoggedIn());
-          else anonymousAddToCart();
-        }}
-      >
-        <i class="bi bi-cart"></i>
+      <div className="cart-icon">
+        <i
+          className="bi bi-cart"
+          role="button"
+          data-toggle="modal"
+          data-target="#size"
+          onClick={(e) => {
+            setModalState((prevState) => ({
+              ...prevState,
+              label: "Select Size",
+            }));
+          }}
+        ></i>
       </div>
 
-      <div className={`product-card-img`} role="button">
+      <div className={`product-card-img`} role="button" onClick={navigateToPDP}>
         <img
           src={
             product.imgLinks[0] ||
@@ -95,6 +103,47 @@ const ProductCard = ({ product, showFilters }) => {
           )}
         </p>
       </div>
+
+      <Modal
+        modalState={modalState}
+        setModalState={setModalState}
+        onSubmit={() => {}}
+        id={"size"}
+        hideFooter={true}
+        label={"Select Size"}
+      >
+        <div className="product-sizes d-flex flex-row flex-wrap gap-2">
+          {[4, 4.5, 5, 6, 6.5, 7, 8, 9, 10, 11].map((data) => (
+            <p
+              className={`border m-0 ${
+                selectedSize === data ? "border-black" : ""
+              }`}
+              key={data}
+              role="button"
+              onClick={() => setSelectedSize(data)}
+            >
+              {data} UK
+            </p>
+          ))}
+        </div>
+
+        <div className="d-flex justify-content-end">
+          <button
+            className="btn btn-dark btn-sm"
+            onClick={() => {
+              document.getElementById("size").classList.toggle("show");
+              document
+                .getElementsByClassName("modal-backdrop")[0]
+                .classList.toggle("show");
+
+              if (isUserLoggedIn()) addToCart(isUserLoggedIn(), selectedSize);
+              else anonymousAddToCart(product.id, 1, selectedSize);
+            }}
+          >
+            Add to cart
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

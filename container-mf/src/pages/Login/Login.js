@@ -8,6 +8,9 @@ import { mergeCart } from "../../utils/cartFunctions";
 import { useContext } from "react";
 import UserContext from "../../context/UserContext";
 import FormComponent from "../../components/FormComponent/FormComponent.js";
+import "./Login.css";
+import login from "../../assets/login.jpg";
+
 const Login = () => {
   const navigate = useNavigate();
 
@@ -62,22 +65,30 @@ const Login = () => {
   };
 
   return (
-    <div className="container-fluid row">
-      <ToastContainer />
-      <div className="login-img col-6">
-        <img
-          src="https://content.fortune.com/wp-content/uploads/2016/08/nike_app_athletes.jpg?w=1440&q=75"
-          alt="login"
-          width="100%"
-        />
-      </div>
-      <div className="col-6">
-        <FormComponent
-          fields={fields}
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        />
+    <div className="container-fluid px-5">
+      <div className="card login-card bg-light">
+        <div className="card-body row">
+          <div className="login-img col-6">
+            <img src={login} alt="login" />
+          </div>
+          <div className="col-6 pe-5">
+            <p className="welcome-message mt-5 mb-0 pb-0">
+              Welcome to SoleBliss
+            </p>
+            <p className="text-muted mb-5 register-message">
+              Here for the first time?{" "}
+              <span role="button" onClick={() => navigate("/register")}>
+                Register here
+              </span>
+            </p>
+            <FormComponent
+              fields={fields}
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={onSubmit}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

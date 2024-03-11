@@ -15,6 +15,7 @@ const App = () => (
 
 ReactDOM.render(
   <BrowserRouter>
+    <ToastContainer autoClose={3000} theme="dark" />
     <App />
   </BrowserRouter>,
   document.getElementById("app")

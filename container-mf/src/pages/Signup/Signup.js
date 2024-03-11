@@ -1,13 +1,14 @@
 import React from "react";
-import FormComponent from "../FormComponent/FormComponent";
+import FormComponent from "../../components/FormComponent/FormComponent";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useContext } from "react";
-import FormComponent from "../../components/FormComponent/FormComponent.js";
-
+import { ToastContainer } from "react-toastify";
 import UserContext from "../../context/UserContext";
+import "../Login/Login.css";
+import login from "../../assets/login.jpg";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -15,9 +16,9 @@ const Signup = () => {
   const { user, setUser } = useContext(UserContext);
 
   const fields = [
-    { name: "name", label: "Name", type: "text" },
-    { name: "email", label: "Email Address", type: "email" },
-    { name: "password", label: "Password", type: "password" },
+    { name: "name", label: "Name *", type: "text" },
+    { name: "email", label: "Email Address *", type: "email" },
+    { name: "password", label: "Password *", type: "password" },
   ];
 
   const initialValues = { name: "", email: "", password: "" };
@@ -72,21 +73,31 @@ const Signup = () => {
   };
 
   return (
-    <div className="container-fluid row">
-      <div className="login-img col-6">
-        <img
-          src="https://content.fortune.com/wp-content/uploads/2016/08/nike_app_athletes.jpg?w=1440&q=75"
-          alt="login"
-          width="100%"
-        />
-      </div>
-      <div className="col-6">
-        <FormComponent
-          fields={fields}
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        />
+    <div className="container-fluid px-5">
+      <div className="card login-card bg-light">
+        <div className="card-body row">
+          <div className="login-img col-6">
+            <img src={login} alt="login" />
+          </div>
+          <div className="col-6 pe-5">
+            <p className="welcome-message mt-5 mb-0 pb-0">
+              Welcome to SoleBliss
+            </p>
+            <p className="text-muted mb-5 register-message">
+              Already created an account ?
+              <span role="button" onClick={() => navigate("/login")}>
+                {" "}
+                Login here
+              </span>
+            </p>
+            <FormComponent
+              fields={fields}
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={onSubmit}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

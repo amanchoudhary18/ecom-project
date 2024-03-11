@@ -56,6 +56,9 @@ const CartItemDropdown = ({ cartItem }) => {
                   {product?.name}
                 </p>
                 <p className="cart-item-dropdown-quantity m-0 p-0 my-1">
+                  Size : {cartItem?.size}
+                </p>
+                <p className="cart-item-dropdown-quantity m-0 p-0 my-1">
                   Quantity : {cartItem?.quantity}
                 </p>
                 <p className="cart-item-dropdown-price">

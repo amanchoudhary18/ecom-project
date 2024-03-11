@@ -72,7 +72,7 @@ const ProductManagement = () => {
         },
         config
       );
-
+      toast.success(response.data.message);
       fetchAllProducts();
     } catch (error) {
       if (error.response) {
@@ -161,8 +161,15 @@ const ProductManagement = () => {
           <i
             className="bi bi-trash-fill"
             role="button"
+            data-toggle="modal"
+            data-target="#deleteModal"
             onClick={() => {
-              deleteProduct(row);
+              setModalState((prevState) => ({
+                ...prevState,
+                label: "Delete product data",
+              }));
+
+              setSelectedRow(row);
             }}
           ></i>
         </div>
@@ -205,9 +212,7 @@ const ProductManagement = () => {
           {loading ? (
             <div className="loader mx-auto mt-5"></div>
           ) : (
-            <div>
-              <ToastContainer />
-
+            <div className="my-5 mx-3">
               <div className="mx-4 border border-1">
                 <DataTable
                   columns={columns}
@@ -225,6 +230,7 @@ const ProductManagement = () => {
                 onSubmit={() => {}}
                 id={"editProductModal"}
                 hideFooter={true}
+                label={"Edit Product Details"}
               >
                 <div>
                   <FormComponent
@@ -248,6 +254,49 @@ const ProductManagement = () => {
                     }}
                     cols={2}
                   />
+                </div>
+              </Modal>
+
+              <Modal
+                modalState={modalState}
+                setModalState={setModalState}
+                onSubmit={() => {}}
+                id={"deleteModal"}
+                hideFooter={true}
+                label={"Delete Product"}
+              >
+                <div>
+                  <p>Are you really sure you want to delete this product ?</p>
+                </div>
+
+                <div className="d-flex flex-row justify-content-end gap-2">
+                  <button
+                    className="btn btn-sm btn-light px-3"
+                    onClick={() => {
+                      document
+                        .getElementById("deleteModal")
+                        .classList.toggle("show");
+                      document
+                        .getElementsByClassName("modal-backdrop")[0]
+                        .remove();
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-sm btn-dark px-3"
+                    onClick={() => {
+                      document
+                        .getElementById("deleteModal")
+                        .classList.toggle("show");
+                      document
+                        .getElementsByClassName("modal-backdrop")[0]
+                        .remove();
+                      deleteProduct(selectedRow);
+                    }}
+                  >
+                    Confirm
+                  </button>
                 </div>
               </Modal>
             </div>

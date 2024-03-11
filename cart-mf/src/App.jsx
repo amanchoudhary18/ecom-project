@@ -8,7 +8,7 @@ import CartDropdown from "./components/CartDropdown/CartDropdown";
 import { ToastContainer } from "react-toastify";
 const App = () => (
   <BrowserRouter>
-    <ToastContainer />
+    <ToastContainer autoClose={3000} theme="dark" />
     <CartDropdown />
     <CartRouter />
   </BrowserRouter>

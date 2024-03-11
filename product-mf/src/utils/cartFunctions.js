@@ -1,31 +1,29 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 
 const isUserLoggedIn = require("./isUserLoggedIn");
 
 export function anonymousAddToCart(productId, quantity) {
   const cart = localStorage.getItem("cart");
   if (!cart) {
-    localStorage.setItem("cart", JSON.stringify([{ productId, quantity }]));
+    localStorage.setItem("cart", JSON.stringify([]));
+    cartData.push({ productId, quantity, size: cartItem.size });
   } else {
     const cartData = JSON.parse(cart);
     let found = false;
     cartData.forEach((cartItem) => {
-      if (cartItem.productId === productId) {
+      if (cartItem.productId === productId && cartItem.size === size) {
         cartItem.quantity += quantity;
         found = true;
       }
     });
     if (!found) {
-      cartData.push({ productId, quantity });
+      cartData.push({ productId, quantity, size: cartItem.size });
     }
     localStorage.setItem("cart", JSON.stringify(cartData));
   }
-
-  toast.success("Product added successfully");
 }
 
-async function mergeCart() {
+export async function mergeCart() {
   const userToken = isUserLoggedIn();
   if (!userToken) {
     return;

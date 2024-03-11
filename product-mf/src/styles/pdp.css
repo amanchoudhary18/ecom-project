@@ -112,3 +112,88 @@
 .out-of-stock-btn {
   opacity: 0.5;
 }
+
+
+
+.product-sizes p {
+  font-family: "Poppins";
+  padding: 7px 5px;
+  width: 50px;
+  text-align: center;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+
+
+.product-sizes p:hover {
+  background-color: rgb(244, 244, 244);
+}
+
+.product-attributes .head {
+  font-family: "Poppins";
+  font-size: 18px;
+}
+
+
+
+.product-attributes .attribute-name {
+  font-family: "Poppins";
+  font-size: 14px;
+  font-weight: 500;
+  border-right: 1px solid black;
+
+}
+
+.attribute-value {
+  font-family: "Poppins";
+  font-size: 14px;
+}
+
+.product-reviews .head {
+  font-size: 16px;
+  font-weight: 500px;
+  font-family: "Poppins";
+}
+
+.product-review img {
+  width: 40px;
+}
+
+.product-review .card-title {
+  font-size: 14px;
+  font-family: "Poppins";
+}
+
+.product-review .card-body {
+  font-size: 12px;
+  font-family: "Poppins";
+}
+
+.review-description {
+  font-size: 12px;
+  font-family: "Poppins";
+  padding-left: 16px;
+  line-height: 0.8;
+}
+
+.product-reviews-list {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.product-reviews-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+.product-reviews-list::-webkit-scrollbar-track {
+  border-radius: 8px;
+  background-color: #e7e7e7;
+  border: 1px solid #cacaca;
+}
+
+.product-reviews-list::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: black;
+}

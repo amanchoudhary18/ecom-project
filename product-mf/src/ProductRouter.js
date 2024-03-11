@@ -5,6 +5,7 @@ import PDP from "./pages/PDP";
 import { ToastContainer } from "react-toastify";
 import FilterContext from "./context/FilterContext";
 import ProductManagement from "./pages/ProductManagement";
+import ErrorComponent from "./components/ErrorComponent/ErrorComponent";
 
 const ProductRouter = () => {
   const [filterState, setFilterState] = useState({
@@ -21,7 +22,6 @@ const ProductRouter = () => {
 
   return (
     <FilterContext.Provider value={{ filterState, setFilterState }}>
-      <ToastContainer />
       <Routes>
         <Route path="/" element={<Products />} />
         <Route path="/:id" element={<PDP />} />
@@ -34,6 +34,7 @@ const ProductRouter = () => {
             />
           }
         />
+        <Route path="*" element={<ErrorComponent status={404} />} />
       </Routes>
     </FilterContext.Provider>
   );

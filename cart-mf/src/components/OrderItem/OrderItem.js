@@ -24,6 +24,9 @@ const OrderItem = ({ orderItem }) => {
           <p className="order-item-quantity m-0 my-1 p-0">
             Quantity : {orderItem?.quantity}
           </p>
+          <p className="order-item-quantity m-0 my-1 p-0">
+            Size : {orderItem?.size}
+          </p>
           <p className="order-item-price">
             MRP : ₹ {orderItem?.price?.toLocaleString("en-IN")}
           </p>

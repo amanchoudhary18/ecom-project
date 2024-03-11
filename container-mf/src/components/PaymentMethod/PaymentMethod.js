@@ -2,8 +2,15 @@ import isUserLoggedIn from "../../utils/isUserLoggedIn";
 import "../Address/Address.css";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Modal from "../Modal/Modal";
+import { useState } from "react";
 
 const PaymentMethod = ({ paymentMethod, fetchUserData }) => {
+  const [modalState, setModalState] = useState({
+    label: "",
+    data: [],
+  });
+
   const deletePaymentMethod = async () => {
     const userToken = isUserLoggedIn();
 
@@ -50,13 +57,59 @@ const PaymentMethod = ({ paymentMethod, fetchUserData }) => {
         <button
           type="button"
           className="btn btn-sm float-right my-3"
+          data-toggle="modal"
+          data-target="#deleteModal"
           onMouseOver={(e) => e.currentTarget.classList.add("btn-danger")}
           onMouseOut={(e) => e.currentTarget.classList.remove("btn-danger")}
-          onClick={() => deletePaymentMethod()}
+          onClick={() =>
+            setModalState((prevState) => ({
+              ...prevState,
+              label: "Delete payment method",
+            }))
+          }
         >
           <i className="bi bi-trash"></i>
         </button>
       </div>
+
+      <Modal
+        modalState={modalState}
+        setModalState={setModalState}
+        onSubmit={() => {}}
+        id={"deleteModal"}
+        hideFooter={true}
+        label={"Delete Payment Method"}
+      >
+        <div>
+          <p>Are you really sure you want to delete this Payment Method ?</p>
+        </div>
+
+        <div className="d-flex flex-row justify-content-end gap-2">
+          <button
+            className="btn btn-sm btn-light px-3"
+            onClick={() => {
+              document.getElementById("deleteModal").classList.toggle("show");
+              document
+                .getElementsByClassName("modal-backdrop")[0]
+                .classList.toggle("show");
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            className="btn btn-sm btn-dark px-3"
+            onClick={() => {
+              document.getElementById("deleteModal").classList.toggle("show");
+              document
+                .getElementsByClassName("modal-backdrop")[0]
+                .classList.toggle("show");
+              deletePaymentMethod();
+            }}
+          >
+            Confirm
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

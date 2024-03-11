@@ -63,7 +63,7 @@ const Filters = ({ filterState, setFilterState }) => {
         </div>
         <div>
           {["Men", "Women", "Unisex"].map((gender, index) => (
-            <div className="my-2 form-check">
+            <div className="my-2 form-check" key={gender}>
               <input
                 className={`form-check-input`}
                 type="checkbox"
@@ -119,7 +119,7 @@ const Filters = ({ filterState, setFilterState }) => {
             { min: 7501, max: 12999 },
             { min: 13000 },
           ].map((range, index) => (
-            <div className="my-2 form-check">
+            <div className="my-2 form-check " key={range.min}>
               <input
                 className={`form-check-input`}
                 type="radio"

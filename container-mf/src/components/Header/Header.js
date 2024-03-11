@@ -2,17 +2,24 @@ import React, { useState, Suspense } from "react";
 import logo from "../../assets/swoosh.png";
 import "./Header.css";
 import { useNavigate } from "react-router-dom";
-import avatar from "../../assets/avatars/avatar (1).svg";
 import isUserLoggedIn from "../../utils/isUserLoggedIn";
-import { useCallback } from "react";
 import { useContext } from "react";
 import UserContext from "../../context/UserContext";
 import axios from "axios";
 import isAdmin from "../../utils/isAdmin";
-import { ErrorBoundary } from "react-error-boundary";
-import cart from "../../assets/cart.png";
 
-const CartDropdown = React.lazy(() => import("cart_mf/CartDropdown"));
+const CartDropdown = React.lazy(() =>
+  import("cart_mf/CartDropdown").catch(() => {
+    console.error("Failed to load cart dropdown");
+    return {
+      default: () => (
+        <div className="pt-1">
+          <i className="bi bi-cart cart-img-down h3 px-3" />
+        </div>
+      ),
+    };
+  })
+);
 
 const Header = () => {
   const navigate = useNavigate();
@@ -97,7 +104,9 @@ const Header = () => {
           </div>
         )}
         <div className="col-lg-3 header-profile d-flex flex-row ">
-          <CartDropdown dropdown={dropdown} setDropdown={setDropdown} />
+          <Suspense fallback={<div className="loader"></div>}>
+            <CartDropdown dropdown={dropdown} setDropdown={setDropdown} />
+          </Suspense>
 
           {isUserLoggedIn() ? (
             <img

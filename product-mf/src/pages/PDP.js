@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import Confetti from "react-confetti";
 import { anonymousAddToCart } from "../utils/cartFunctions";
 import ErrorComponent from "../components/ErrorComponent/ErrorComponent";
+import { Rating } from "react-simple-star-rating";
 
 const PDP = () => {
   const params = useParams();
@@ -20,6 +21,7 @@ const PDP = () => {
   const [error, setError] = useState(false);
 
   const [confetti, setConfetti] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(4);
 
   const handleMouseOver = (link) => {
     console.log(link);
@@ -42,6 +44,21 @@ const PDP = () => {
       console.log(response);
       setProduct(response.data.product);
       setSelectedImgLink(response.data.product.imgLinks[1]);
+
+      // Traverse over the reviews array of the product
+      let reviews = response.data.product.reviews;
+      let userPromises = reviews.map((review) =>
+        axios.get(`http://localhost:8080/users/${review.userId}`, config)
+      );
+
+      let users = await Promise.all(userPromises);
+
+      for (let i = 0; i < reviews.length; i++) {
+        reviews[i].user = users[i].data.user;
+        delete reviews[i].userId;
+      }
+      response.data.product.reviews = reviews;
+      setProduct(response.data.product);
     } catch (error) {
       setError(error);
       console.log(error);
@@ -57,6 +74,7 @@ const PDP = () => {
       const addToCartBody = {
         productId: product.id,
         quantity: 1,
+        size: `${selectedSize} UK`,
       };
 
       const response = await axios.post(
@@ -89,7 +107,7 @@ const PDP = () => {
   return (
     <>
       {error ? (
-        <ErrorComponent status={error.response?.status} />
+        <ErrorComponent status={404} />
       ) : (
         <div className="container-fluid">
           {loading ? (
@@ -161,7 +179,7 @@ const PDP = () => {
                   </div>
                 </div>
               </div>
-              <div className="pdp-details col-md-4 col-xl-3">
+              <div className="pdp-details col-md-4">
                 {product?.quantity === 0 && (
                   <p className="out-of-stock">
                     This product is currently out of stock.
@@ -180,6 +198,21 @@ const PDP = () => {
 
                 <p className="description">{product?.description}</p>
 
+                <h6 className="mt-5">Select your size</h6>
+                <div className="product-sizes d-flex flex-row flex-wrap gap-2">
+                  {[4, 4.5, 5, 6, 6.5, 7, 8, 9, 10, 11].map((data) => (
+                    <p
+                      className={`border m-0 ${
+                        selectedSize === data ? "border-black" : ""
+                      }`}
+                      role="button"
+                      onClick={() => setSelectedSize(data)}
+                    >
+                      {data} UK
+                    </p>
+                  ))}
+                </div>
+
                 <button
                   className={`mt-5 py-3 add-to-cart-btn ${
                     product?.quantity === 0 ? "out-of-stock-btn" : ""
@@ -189,7 +222,7 @@ const PDP = () => {
                     if (localStorage.getItem("token"))
                       addToCart(localStorage.getItem("token"));
                     else {
-                      anonymousAddToCart(product.id, 1);
+                      anonymousAddToCart(product.id, 1, `${selectedSize} UK`);
                     }
                   }}
                   disabled={product?.quantity === 0}
@@ -199,6 +232,70 @@ const PDP = () => {
               </div>
             </div>
           )}
+
+          <div className="row my-5">
+            <div className="col-md-2"></div>
+            <div className="product-attributes col-md-5">
+              <p className="head my-3 ">Attributes</p>
+              {product?.attributes.map((attribute) => (
+                <div className="product-attribute row ">
+                  <div className="attribute-name col-md-3 py-1">
+                    {attribute.name}
+                  </div>
+                  <div className="attribute-value col-md-7 py-1 ms-2 ">
+                    {attribute.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div
+              className="product-reviews col-md-4 pe-5"
+              style={{
+                fontFamily: "Poppins",
+                color: "black",
+                backgroundColor: "white",
+              }}
+            >
+              <p className="head my-3">
+                Reviews {`(${product?.reviews?.length})`}
+              </p>
+              <div className="product-reviews-list pe-2">
+                {product?.reviews.map((review) => (
+                  <div className="card mb-3 product-review ">
+                    <div className="card-body">
+                      <div className="d-flex justify-content-between ">
+                        <div className="d-flex flex-row gap-4">
+                          <img
+                            src={review.user?.imgLink}
+                            className="img-fluid rounded-circle review-img"
+                            alt="User"
+                          />
+
+                          <h5 className="card-title mt-2">
+                            {review.user?.name}
+                          </h5>
+                        </div>
+                        <div className="mt-2">
+                          <Rating
+                            initialValue={review.rating}
+                            readonly
+                            allowFraction
+                            size={"20px"}
+                          />
+                        </div>
+                      </div>
+                      <div className="ms-5">
+                        <p className="review-description">
+                          {review.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </>

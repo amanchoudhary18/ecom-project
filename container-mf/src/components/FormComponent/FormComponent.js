@@ -78,13 +78,18 @@ const FormComponent = ({
                     <input
                       type="checkbox"
                       className="form-check-input"
+                      id="showPasswordCheckbox"
                       onClick={handleShowPassword}
                     />
-                    <label className="form-check-label ms-2 text-dark">
+                    <label
+                      className="form-check-label ms-2 text-dark"
+                      htmlFor="showPasswordCheckbox"
+                    >
                       Show password
                     </label>
                   </div>
                 )}
+
                 <ErrorMessage
                   name={field.name}
                   component="div"

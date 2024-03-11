@@ -8,6 +8,7 @@ function Modal({
   id,
   hideFooter,
   children,
+  label,
 }) {
   console.log(modalState);
   return (
@@ -23,7 +24,7 @@ function Modal({
         <div className="modal-content">
           <div className="modal-header">
             <p className="modal-title" id="exampleModalLabel">
-              {modalState.label}
+              {label}
             </p>
           </div>
           <div className="modal-body">{children}</div>

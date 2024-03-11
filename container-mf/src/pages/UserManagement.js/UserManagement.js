@@ -111,6 +111,8 @@ const UserManagement = () => {
         config
       );
 
+      toast.success(response.data.message);
+
       fetchAllUsers();
     } catch (error) {
       if (error.response) {
@@ -181,8 +183,15 @@ const UserManagement = () => {
           <i
             className="bi bi-trash-fill"
             role="button"
+            data-toggle="modal"
+            data-target="#deleteModal"
             onClick={() => {
-              deleteUser(row);
+              setModalState((prevState) => ({
+                ...prevState,
+                label: "Delete user data",
+              }));
+
+              setSelectedRow(row);
             }}
           ></i>
         </div>
@@ -218,10 +227,8 @@ const UserManagement = () => {
   }, []);
 
   return (
-    <div>
-      <ToastContainer />
-
-      <div className="mx-4 border border-1">
+    <div className="mx-3">
+      <div className="mx-4 border border-1 my-5">
         <DataTable
           columns={columns}
           data={users}
@@ -238,6 +245,7 @@ const UserManagement = () => {
         onSubmit={() => {}}
         id={"viewModal"}
         hideFooter={true}
+        label={"View user data"}
       >
         <div>
           <FormComponent
@@ -266,6 +274,7 @@ const UserManagement = () => {
         onSubmit={() => {}}
         id={"editModal"}
         hideFooter={true}
+        label={"Edit user data"}
       >
         <div>
           <FormComponent
@@ -282,12 +291,45 @@ const UserManagement = () => {
               setSubmitting(false);
               resetForm();
               document.getElementById("editModal").classList.toggle("show");
-              document
-                .getElementsByClassName("modal-backdrop")[0]
-                .classList.toggle("show");
+              document.getElementsByClassName("modal-backdrop")[0].remove();
             }}
             cols={2}
           />
+        </div>
+      </Modal>
+
+      <Modal
+        modalState={modalState}
+        setModalState={setModalState}
+        onSubmit={() => {}}
+        id={"deleteModal"}
+        hideFooter={true}
+        label={"Delete user"}
+      >
+        <div>
+          <p>Are you really sure you want to delete this user ?</p>
+        </div>
+
+        <div className="d-flex flex-row justify-content-end gap-2">
+          <button
+            className="btn btn-sm btn-light px-3"
+            onClick={() => {
+              document.getElementById("deleteModal").classList.toggle("show");
+              document.getElementsByClassName("modal-backdrop")[0].remove();
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            className="btn btn-sm btn-dark px-3"
+            onClick={() => {
+              document.getElementById("deleteModal").classList.toggle("show");
+              document.getElementsByClassName("modal-backdrop")[0].remove();
+              deleteUser(selectedRow);
+            }}
+          >
+            Confirm
+          </button>
         </div>
       </Modal>
     </div>

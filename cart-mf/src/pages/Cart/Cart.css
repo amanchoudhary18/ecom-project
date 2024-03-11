@@ -45,3 +45,7 @@
 .out-of-stock-btn {
     opacity: 0.5;
 }
+
+.bold {
+    font-weight: 500;
+}

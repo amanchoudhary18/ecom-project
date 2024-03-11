@@ -62,6 +62,7 @@ const Order = () => {
               return {
                 ...productResponse.data.product,
                 quantity: item.quantity,
+                size: item.size,
               };
             })
           );
@@ -94,6 +95,7 @@ const Order = () => {
             return {
               ...productResponse.data.product,
               quantity: item.quantity,
+              size: item.size,
             };
           })
         );
@@ -218,8 +220,6 @@ const Order = () => {
             <div className="loader mx-auto mt-5"></div>
           ) : (
             <div className="container-fluid mt-5 px-0">
-              <ToastContainer />
-
               {!delivery ? (
                 <>
                   <div className="row mx-5">

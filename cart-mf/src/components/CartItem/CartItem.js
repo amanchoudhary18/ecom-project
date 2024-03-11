@@ -8,11 +8,10 @@ import { toast } from "react-toastify";
 
 const CartItem = ({ cartItem, fetchCartData }) => {
   const navigate = useNavigate();
-
   const handleAddToCart = async () => {
     const token = isUserLoggedIn();
     if (!token) {
-      anonymousAddToCart(cartItem.id, 1);
+      anonymousAddToCart(cartItem.id, 1, cartItem.size);
     } else {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
@@ -20,6 +19,7 @@ const CartItem = ({ cartItem, fetchCartData }) => {
         const addToCartBody = {
           productId: cartItem.id,
           quantity: 1,
+          size: cartItem.size,
         };
 
         const response = await axios.post(
@@ -44,7 +44,7 @@ const CartItem = ({ cartItem, fetchCartData }) => {
   const handleRemoveFromCart = async (number) => {
     const token = isUserLoggedIn();
     if (!token) {
-      anonymousRemoveFromCart(cartItem.id, number);
+      anonymousRemoveFromCart(cartItem.id, number, cartItem.size);
     } else {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
@@ -52,6 +52,7 @@ const CartItem = ({ cartItem, fetchCartData }) => {
         const removeFromCartBody = {
           productId: cartItem.id,
           quantity: number,
+          size: cartItem.size,
         };
 
         const response = await axios.post(
@@ -85,13 +86,13 @@ const CartItem = ({ cartItem, fetchCartData }) => {
             className="cart-item-img"
             onClick={() => {
               navigate(`/products/${cartItem.id}`);
-              setDropdown(false);
             }}
           />
         </div>
         <div className="col-8">
           <p className="cart-item-name m-0 my-2 p-0">{cartItem?.name}</p>
-          <p className="cart-item-quantity">Men's Category</p>
+          <p className="cart-item-quantity mb-0 pb-0">Men's Category</p>
+          <p className="cart-item-quantity ">{`Size : ${cartItem.size}`}</p>
           <p className="cart-item-quantity m-0 p-0 my-1">
             <button
               disabled={cartItem.quantity === 0}

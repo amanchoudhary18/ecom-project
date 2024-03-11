@@ -233,7 +233,6 @@ const Profile = () => {
 
   return (
     <div className="container">
-      <ToastContainer />
       <div className="row">
         <div className="col-md-3">
           <div className="card avatars ">
@@ -403,6 +402,7 @@ const Profile = () => {
         onSubmit={() => {}}
         id={"addressModal"}
         hideFooter={true}
+        label={"Add address"}
       >
         <div>
           <FormComponent
@@ -438,6 +438,7 @@ const Profile = () => {
         onSubmit={() => {}}
         id={"paymentMethodModal"}
         hideFooter={true}
+        label={"Add payment method"}
       >
         <div>
           <FormComponent
@@ -469,6 +470,7 @@ const Profile = () => {
         setModalState={setModalState}
         onSubmit={() => updateUser(userData)}
         id={"exampleModal"}
+        label={"Choose avatar"}
       >
         <div className="avatar-modal mx-2">
           <img src={userData?.imgLink} alt="avatar" width="60px" />

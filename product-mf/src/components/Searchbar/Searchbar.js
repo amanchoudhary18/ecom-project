@@ -7,14 +7,9 @@ const SearchBar = () => {
   const { filterState, setFilterState } = useContext(FilterContext);
   const [inputValue, setInputValue] = useState(filterState.keyword);
 
-  const debouncedHandleChange = debounce(() => {
-    setFilterState({ ...filterState, keyword: inputValue });
-  }, 500);
-
   const handleInputChange = (event) => {
     const newValue = event.target.value;
     setInputValue(newValue);
-    debouncedHandleChange(newValue);
   };
 
   const handleSearch = () => {

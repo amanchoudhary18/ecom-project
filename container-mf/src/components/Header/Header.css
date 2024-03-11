@@ -47,3 +47,8 @@
     cursor: pointer;
   }
 }
+
+.cart-img-down {
+  opacity: 0.5;
+
+}

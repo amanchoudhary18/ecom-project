@@ -5,7 +5,7 @@ import CartItem from "../../components/CartItem/CartItem";
 import "./Cart.css";
 import { useNavigate } from "react-router-dom";
 
-import emptyCart from "../../assets/Empty Cart.jpg";
+import emptyCart from "../../assets/Empty Cart.png";
 import ErrorComponent from "../../components/ErrorComponent/ErrorComponent";
 
 const Cart = () => {
@@ -42,6 +42,7 @@ const Cart = () => {
               return {
                 ...productResponse.data.product,
                 cartQuantity: item.quantity,
+                size: item.size,
               };
             })
           );
@@ -69,9 +70,11 @@ const Cart = () => {
             if (productResponse.data.product.quantity === 0) {
               setDisableCheckout(true);
             }
+
             return {
               ...productResponse.data.product,
               cartQuantity: item.quantity,
+              size: item.size,
             };
           })
         );
@@ -191,8 +194,11 @@ const Cart = () => {
                       className="my-auto"
                     />
                   </div>
-                  <div className="d-flex justify-content-center">
-                    <p>Your cart looks empty</p>
+                  <div className="d-flex justify-content-center mt-3">
+                    <p>
+                      “We cannot believe you moved forward with{" "}
+                      <span className="bold">an empty cart</span>”
+                    </p>
                   </div>
                   <div className="d-flex justify-content-center">
                     <button
@@ -201,7 +207,7 @@ const Cart = () => {
                         navigate("/products");
                       }}
                     >
-                      Let's go shopping
+                      Let's fill it up
                     </button>
                   </div>
                 </div>
