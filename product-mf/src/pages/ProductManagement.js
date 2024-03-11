@@ -272,26 +272,14 @@ const ProductManagement = () => {
                 <div className="d-flex flex-row justify-content-end gap-2">
                   <button
                     className="btn btn-sm btn-light px-3"
-                    onClick={() => {
-                      document
-                        .getElementById("deleteModal")
-                        .classList.toggle("show");
-                      document
-                        .getElementsByClassName("modal-backdrop")[0]
-                        .remove();
-                    }}
+                    data-dismiss="modal"
                   >
                     Cancel
                   </button>
                   <button
                     className="btn btn-sm btn-dark px-3"
+                    data-dismiss="modal"
                     onClick={() => {
-                      document
-                        .getElementById("deleteModal")
-                        .classList.toggle("show");
-                      document
-                        .getElementsByClassName("modal-backdrop")[0]
-                        .remove();
                       deleteProduct(selectedRow);
                     }}
                   >

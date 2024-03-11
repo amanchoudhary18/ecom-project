@@ -26,9 +26,14 @@
     font-weight: 500;
 }
 
-.order-address,
-.order-item-list {
+.order-address {
     max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.order-item-list {
+    max-height: 200px;
     overflow-y: auto;
     overflow-x: hidden;
 }

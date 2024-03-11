@@ -13,7 +13,7 @@ import famous1 from "../../assets/famous-1.jpg";
 import famous2 from "../../assets/famous-2.jpeg";
 import famous3 from "../../assets/famous-3.png";
 
-import about from "../../assets/nike-cartoon.png";
+import about from "../../assets/Nike-cartoon.png";
 
 import axios from "axios";
 import isAdmin from "../../utils/isAdmin";
@@ -167,54 +167,66 @@ const Dashboard = () => {
         <div className={`pt-5 mx-5 ${styles.players}`}>
           <p>Athletes</p>
         </div>
-        <div className="my-5 d-flex flex-row justify-content-around">
-          <div className="w-25">
-            <img
-              src={famous1}
-              alt="famous"
-              className={`${styles["players-img"]} rounded`}
-            />
-            <p className="mt-2 text-muted ">Nike x Neymar</p>
-            <p className={`${styles["player-title"]}`}>The WONDER-kid</p>
-            <p className={`${styles["player-description"]}`}>
-              Neymar signed with Nike in 2005, when he was only 13 years old,
-              and became one of the most prominent faces of the brand. He wore
-              Nike boots, jerseys, and accessories, and starred in several Nike
-              campaigns and commercials. He also had his own signature line of
-              Nike products.
+        <div className={`my-5 d-flex flex-row justify-content-around `}>
+          <div className={`${styles["famous-slots"]}`}>
+            <div className="text-center">
+              <img
+                src={famous1}
+                alt="famous"
+                className={`text-center  ${styles["players-img"]} rounded`}
+                width="350px"
+              />
+            </div>
+
+            <p className="mt-2 text-muted px-3">SoleBliss x Neymar</p>
+            <p className={`${styles["player-title"]} px-3`}>The WONDER-kid</p>
+            <p className={`${styles["player-description"]} px-3`}>
+              Neymar signed with SoleBliss in 2005, when he was only 13 years
+              old, and became one of the most prominent faces of the brand. He
+              wore SoleBliss boots, jerseys, and accessories, and starred in
+              several SoleBliss campaigns and commercials. He also had his own
+              signature line of SoleBliss products.
             </p>
           </div>
 
-          <div className="w-25">
-            <img
-              src={famous2}
-              alt="famous"
-              className={`${styles["players-img"]} rounded`}
-            />
-            <p className="mt-2 text-muted ">Nike x LeBron</p>
-            <p className={`${styles["player-title"]}`}>The Chosen One</p>
-            <p className={`${styles["player-description"]}`}>
-              LeBron James has been with Nike since 2003, when he signed a
+          <div className={`${styles["famous-slots"]}`}>
+            <div className="text-center">
+              <img
+                src={famous2}
+                alt="famous"
+                className={`text-center ${styles["players-img"]} rounded`}
+                width="350px"
+              />
+            </div>
+            <p className="mt-2 text-muted px-3">SoleBliss x LeBron</p>
+            <p className={`${styles["player-title"]} px-3`}>The Chosen One</p>
+            <p className={`${styles["player-description"]} px-3`}>
+              LeBron James has been with SoleBliss since 2003, when he signed a
               seven-year, $90 million deal as a rookie. Since then, he has
               become one of the most influential and lucrative athletes for
-              Nike, earning an estimated $32 million per year from the brand
+              SoleBliss, earning an estimated $32 million per year from the
+              brand
             </p>
           </div>
 
-          <div className="w-25">
-            <img
-              src={famous3}
-              alt="famous"
-              className={`${styles["players-img"]} rounded`}
-            />
-            <p className="mt-2 text-muted ">Nike x Woods</p>
-            <p className={`${styles["player-title"]}`}>The Silent Tiger</p>
-            <p className={`${styles["player-description"]}`}>
-              Tiger Woods signed with Nike in 1996, when he turned pro, and
+          <div className={`${styles["famous-slots"]}`}>
+            <div className="text-center">
+              <img
+                src={famous3}
+                alt="famous"
+                className={`text-center ${styles["players-img"]} rounded`}
+                width="350px"
+              />
+            </div>
+
+            <p className="mt-2 text-muted px-3">SoleBliss x Woods</p>
+            <p className={`${styles["player-title"]} px-3`}>The Silent Tiger</p>
+            <p className={`${styles["player-description"]} px-3`}>
+              Tiger Woods signed with SoleBliss in 1996, when he turned pro, and
               became the first golfer to have a major endorsement deal with the
-              brand. He helped Nike establish its presence and reputation in the
-              golf industry, wearing Nike golf shoes, apparel, and equipment,
-              and promoting Nike Golf products and services.
+              brand. He helped SoleBliss establish its presence and reputation
+              in the golf industry, wearing SoleBliss golf shoes, apparel, and
+              equipment, and promoting SoleBliss Golf products and services.
             </p>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, Suspense } from "react";
-import logo from "../../assets/swoosh.png";
+import logo from "../../assets/logo.png";
 import "./Header.css";
 import { useNavigate } from "react-router-dom";
 import isUserLoggedIn from "../../utils/isUserLoggedIn";
@@ -13,7 +13,12 @@ const CartDropdown = React.lazy(() =>
     console.error("Failed to load cart dropdown");
     return {
       default: () => (
-        <div className="pt-1">
+        <div
+          className="pt-1"
+          data-toggle="tooltip"
+          data-placement="bottom"
+          title="Cart is down"
+        >
           <i className="bi bi-cart cart-img-down h3 px-3" />
         </div>
       ),
@@ -60,7 +65,12 @@ const Header = () => {
         <a
           className={`col-lg-${isAdmin() === "true" ? 3 : 4} header-logo mt-2`}
         >
-          <img src={logo} alt="logo" />
+          <img
+            src={logo}
+            alt="logo"
+            onClick={() => navigate("/")}
+            role="button"
+          />
         </a>
         {isAdmin() === "true" ? (
           <div className="col-lg-6 d-flex flex-content-start gap-4 header-links">
@@ -113,6 +123,7 @@ const Header = () => {
               src={user?.imgLink}
               alt="avatar"
               className="avatar-img"
+              role="button"
               onClick={() => {
                 navigate("/profile");
               }}

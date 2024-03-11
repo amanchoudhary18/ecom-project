@@ -85,24 +85,13 @@ const PaymentMethod = ({ paymentMethod, fetchUserData }) => {
         </div>
 
         <div className="d-flex flex-row justify-content-end gap-2">
-          <button
-            className="btn btn-sm btn-light px-3"
-            onClick={() => {
-              document.getElementById("deleteModal").classList.toggle("show");
-              document
-                .getElementsByClassName("modal-backdrop")[0]
-                .classList.toggle("show");
-            }}
-          >
+          <button className="btn btn-sm btn-light px-3" data-dismiss="modal">
             Cancel
           </button>
           <button
             className="btn btn-sm btn-dark px-3"
+            data-dismiss="modal"
             onClick={() => {
-              document.getElementById("deleteModal").classList.toggle("show");
-              document
-                .getElementsByClassName("modal-backdrop")[0]
-                .classList.toggle("show");
               deletePaymentMethod();
             }}
           >

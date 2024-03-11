@@ -97,12 +97,17 @@ const OrderItem = ({ orderItem, orderDate }) => {
             className="btn btn-sm btn-light"
             data-toggle="modal"
             data-target={`#addReviewModal${orderItem?.id}`}
-            onClick={() =>
+            onClick={() => {
+              setReview({
+                rating: 5,
+                description: "",
+              });
+
               setModalState((prevState) => ({
                 ...prevState,
                 label: "Add review",
-              }))
-            }
+              }));
+            }}
           >
             Add a review
           </button>
@@ -134,13 +139,8 @@ const OrderItem = ({ orderItem, orderDate }) => {
         <div className="d-flex flex-row gap-3 justify-content-end mt-3 px-3">
           <button
             className="btn btn-sm btn-light"
+            data-dismiss="modal"
             onClick={() => {
-              document
-                .getElementById(`addReviewModal${orderItem?.id}`)
-                .classList.toggle("show");
-              document
-                .getElementsByClassName("modal-backdrop")[0]
-                .classList.toggle("show");
               setReview({
                 rating: 5,
                 description: "",
@@ -152,13 +152,8 @@ const OrderItem = ({ orderItem, orderDate }) => {
 
           <button
             className="btn btn-sm btn-dark px-3"
+            data-dismiss="modal"
             onClick={() => {
-              document
-                .getElementById(`addReviewModal${orderItem?.id}`)
-                .classList.toggle("show");
-              document
-                .getElementsByClassName("modal-backdrop")[0]
-                .classList.toggle("show");
               addReview(orderItem?.productId);
             }}
           >

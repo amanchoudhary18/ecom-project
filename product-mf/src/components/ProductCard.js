@@ -63,7 +63,7 @@ const ProductCard = ({ product, showFilters }) => {
           className="bi bi-cart"
           role="button"
           data-toggle="modal"
-          data-target="#size"
+          data-target={`#size${product.id}`}
           onClick={(e) => {
             setModalState((prevState) => ({
               ...prevState,
@@ -108,7 +108,7 @@ const ProductCard = ({ product, showFilters }) => {
         modalState={modalState}
         setModalState={setModalState}
         onSubmit={() => {}}
-        id={"size"}
+        id={`size${product.id}`}
         hideFooter={true}
         label={"Select Size"}
       >
@@ -130,12 +130,8 @@ const ProductCard = ({ product, showFilters }) => {
         <div className="d-flex justify-content-end">
           <button
             className="btn btn-dark btn-sm"
+            data-dismiss="modal"
             onClick={() => {
-              document.getElementById("size").classList.toggle("show");
-              document
-                .getElementsByClassName("modal-backdrop")[0]
-                .classList.toggle("show");
-
               if (isUserLoggedIn()) addToCart(isUserLoggedIn(), selectedSize);
               else anonymousAddToCart(product.id, 1, selectedSize);
             }}

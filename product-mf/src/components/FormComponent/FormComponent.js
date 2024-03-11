@@ -104,6 +104,7 @@ const FormComponent = ({
                 type="submit"
                 className="btn btn-sm btn-dark mt-3"
                 disabled={!formik.isValid || formik.isSubmitting}
+                data-dismiss="modal"
               >
                 Submit
               </button>

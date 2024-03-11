@@ -19,17 +19,17 @@ import ErrorComponent from "./components/ErrorComponent/ErrorComponent.js";
 import ErrorBoundary from "./components/ErrorBoundary.js";
 import Signup from "./pages/Signup/Signup.js";
 import Footer from "./components/Footer/Footer.js";
+import ScrollToTop from "./utils/ScrollToTop.js";
+import { Helmet } from "react-helmet";
 
 const ProductRouter = React.lazy(() =>
   import("product_mf/ProductRouter").catch(() => {
-    console.error("Failed to load ProductRouter");
     return { default: () => <ErrorComponent /> };
   })
 );
 
 const CartRouter = React.lazy(() =>
   import("cart_mf/CartRouter").catch(() => {
-    console.error("Failed to load CartRouter");
     return { default: () => <ErrorComponent /> };
   })
 );
@@ -50,6 +50,8 @@ const App = () => {
   return (
     <BrowserRouter>
       <ToastContainer autoClose={3000} theme="dark" />
+      <ScrollToTop />
+
       <UserContext.Provider value={{ user, setUser }}>
         <div className="pb-5">
           <Header />
@@ -58,25 +60,78 @@ const App = () => {
         <div className="app-content mb-5">
           <Breadcrumbs />
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route
+              path="/"
+              element={
+                <>
+                  <Helmet>
+                    <title>SB | Home</title>
+                  </Helmet>
+                  <Dashboard />
+                </>
+              }
+            />
             <Route
               path="/user-management"
               element={
                 <ProtectedRoute
-                  element={<UserManagement />}
+                  element={
+                    <>
+                      <Helmet>
+                        <title>SB | Manage</title>
+                      </Helmet>
+                      <UserManagement />
+                    </>
+                  }
                   isAdmin={isAdmin}
                 />
               }
             />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Signup />} />
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Helmet>
+                    <title>SB | Login</title>
+                  </Helmet>
+                  <Login />
+                </>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <>
+                  <Helmet>
+                    <title>SB | Register</title>
+                  </Helmet>
+                  <Signup />
+                </>
+              }
+            />
 
-            <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/profile"
+              element={
+                <>
+                  <Helmet>
+                    <title>SB | Profile</title>
+                  </Helmet>
+                  <Profile />
+                </>
+              }
+            />
+
             <Route
               path="/products/*"
               element={
                 <Suspense fallback={<div className="loader"></div>}>
-                  <ProductRouter />
+                  <>
+                    <Helmet>
+                      <title>SB | Products</title>
+                    </Helmet>
+                    <ProductRouter />
+                  </>
                 </Suspense>
               }
             />
@@ -84,7 +139,12 @@ const App = () => {
               path="/cart/*"
               element={
                 <Suspense fallback={<div className="loader"></div>}>
-                  <CartRouter />
+                  <>
+                    <Helmet>
+                      <title>SB | Cart</title>
+                    </Helmet>
+                    <CartRouter />
+                  </>
                 </Suspense>
               }
             />
