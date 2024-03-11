@@ -39,21 +39,16 @@ public class UserService {
     // extract token from cookies
     public String extractTokenFromRequest(HttpServletRequest request) {
         try {
-            Cookie[] cookies = request.getCookies();
+            String authHeader = request.getHeader("Authorization");
             String authToken = null;
 
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("auth_token".equals(cookie.getName())) {
-                        authToken = cookie.getValue();
-                        break;
-                    }
-                }
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                authToken = authHeader.replace("Bearer ", "");
             }
 
             if (authToken == null) {
-                logger.error("extractTokenFromRequest : error while extracting token - Authentication token not present in cookie");
-                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication token not found in cookie.");
+                logger.error("extractTokenFromRequest : error while extracting token - Authentication token not present in header");
+                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication token not found in header.");
             }
 
             return authToken;
@@ -64,6 +59,7 @@ public class UserService {
             throw exception;
         }
     }
+
 
     // get user data from token
     public User getUserDataFromToken(String authToken) {
@@ -140,7 +136,8 @@ public class UserService {
             List<UserResponseBody> users = new ArrayList<>();
 
             for (User userData : fetchedUsers) {
-                UserResponseBody filteredUser = new UserResponseBody(userData.getEmail(), userData.getRole(), userData.getName(), userData.getId(), userData.getAddresses());
+                UserResponseBody filteredUser = new UserResponseBody(userData.getEmail(), userData.getRole(), userData.getName(), userData.getId(), userData.getAddresses(),userData.getImgLink(),userData.getPaymentMethods());
+
                 users.add(filteredUser);
             }
             return users;
@@ -175,6 +172,7 @@ public class UserService {
 
             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             user.setPassword(hashedPassword);
+            user.setImgLink("https://i.ibb.co/n3tCTrK/avatar-17.png");
 
             return userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
@@ -235,8 +233,7 @@ public class UserService {
                     }
                     case "email": {
                         if (value.equals(user.getEmail())) {
-                            logger.error("update user - error while updating user : {}", "entering old email");
-                            throw new BaseException(HttpStatus.BAD_REQUEST, "Please enter a new email address");
+                            break;
                         }
 
                         Optional<User> existingUser = userRepository.findByEmail((String) value);
@@ -245,6 +242,12 @@ public class UserService {
                             throw new BaseException(HttpStatus.BAD_REQUEST, "User already exists with this email");
                         }
                         user.setEmail((String) value);
+                        break;
+                    }
+
+
+                    case "imgLink": {
+                        user.setImgLink((String) value);
                         break;
                     }
                     default: {
@@ -256,7 +259,8 @@ public class UserService {
 
             userRepository.save(user);
 
-            return new UserResponseBody(user.getEmail(), user.getRole(), user.getName(), user.getId(), user.getAddresses());
+            return new UserResponseBody(user.getEmail(), user.getRole(), user.getName(), user.getId(), user.getAddresses(),user.getImgLink(),user.getPaymentMethods());
+
         } catch (TransactionSystemException exception) {
             logger.error("update user - error while updating user : {}", exception.getMessage());
             throw new BaseException(HttpStatus.BAD_REQUEST, "Please enter a valid email");
@@ -286,6 +290,8 @@ public class UserService {
             throw exception;
         }
     }
+
+
 
     // get addresses for user
     public List<Address> retrieveAddressesForUser(int userId) {
@@ -458,4 +464,6 @@ public class UserService {
             throw exception;
         }
     }
+
+
 }

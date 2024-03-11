@@ -39,8 +39,10 @@ public class User {
     private List<Address> addresses;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    @JsonIgnore
     private List<PaymentMethod> paymentMethods;
+
+
+    private String imgLink;
 
     public User() {
         // no args constructor

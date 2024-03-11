@@ -31,6 +31,8 @@ public class OrderItem {
     @Positive(message = "Price should be greater than 0")
     private double price;
 
+    @NotNull(message = "Size cannot be empty")
+    private String size;
 
     @NotNull(message = "Quantity field cannot be empty")
     @Min(value = 1, message = "Quantity should be greater than 0")

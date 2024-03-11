@@ -4,6 +4,7 @@ package org.example.productservice.models;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,6 +21,7 @@ import java.util.List;
 @Accessors(chain = true)
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
 public class Product {
 
     @MongoId(FieldType.OBJECT_ID)
@@ -43,9 +46,9 @@ public class Product {
     @Positive(message = "Quantity must be greater than 0")
     private int quantity;
 
-    private List<String> imgLinks;
+    private List<String> imgLinks = new ArrayList<>();
 
-
+    private List<Review> reviews = new ArrayList<>();
 
     @Data
     public static class Attribute {
@@ -57,6 +60,13 @@ public class Product {
             this.value = value;
         }
 
+    }
+
+    @Data
+    public static class Review {
+        private int userId;
+        private String description;
+        private double rating;
     }
 
 

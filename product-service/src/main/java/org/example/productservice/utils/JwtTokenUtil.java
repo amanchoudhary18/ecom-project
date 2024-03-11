@@ -24,4 +24,13 @@ public class JwtTokenUtil {
         return tokenData;
     }
 
+    public static Integer getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return Integer.parseInt(claims.getSubject());
+    }
+
 }

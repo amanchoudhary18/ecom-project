@@ -3,6 +3,7 @@ package org.example.productservice.services;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.example.productservice.dto.AddReviewBody;
 import org.example.productservice.dto.CategoryUpdateBody;
 import org.example.productservice.dto.ProductDetailsForOrder;
 import org.example.productservice.dto.ProductUpdateBody;
@@ -14,6 +15,7 @@ import org.example.productservice.repository.ProductRepository;
 import org.example.productservice.utils.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,7 @@ public class ProductService {
 
     Logger logger = LoggerFactory.getLogger(Logger.class);
 
+    @Autowired
     public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
@@ -43,31 +46,38 @@ public class ProductService {
     // extract token from cookies
     public String extractTokenFromRequest(HttpServletRequest request) {
         try {
-            Cookie[] cookies = request.getCookies();
+            String authHeader = request.getHeader("Authorization");
             String authToken = null;
 
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("auth_token".equals(cookie.getName())) {
-                        authToken = cookie.getValue();
-                        break;
-                    }
-                }
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                authToken = authHeader.replace("Bearer ", "");
             }
 
             if (authToken == null) {
-                logger.error("extractTokenFromRequest - Authentication token not found in cookie.");
-                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication token not found in cookie.");
+                logger.error("extractTokenFromRequest : error while extracting token - Authentication token not present in header");
+                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication token not found in header.");
             }
 
             return authToken;
         } catch (BaseException exception) {
             throw exception;
         } catch (Exception exception) {
-            logger.error("extractTokenFromRequest - {}", exception.getMessage());
+            logger.error("extractTokenFromRequest : error while extracting token - {}", exception.getMessage());
             throw exception;
         }
     }
+
+    public int getUserIdFromToken(String authToken) {
+        try {
+            int userId = JwtTokenUtil.getUserIdFromToken(authToken);
+
+            return userId;
+        } catch (Exception exception) {
+            logger.error("getUserDataFromToken : error while extracting user data from token - {}", exception.getMessage());
+            throw exception;
+        }
+    }
+
 
     // check admin from token
     public Boolean checkAdmin(String authToken) {
@@ -163,6 +173,10 @@ public class ProductService {
                 existingProduct.setBrand(updatedProduct.getBrand());
             }
 
+            if (updatedProduct.getQuantity() != null) {
+                existingProduct.setQuantity(Integer.parseInt(updatedProduct.getQuantity()));
+            }
+
 
             // Save the updated product
             productRepository.save(existingProduct);
@@ -236,9 +250,23 @@ public class ProductService {
         }
     }
 
-    public List<Product> getFilteredProducts(Double minPrice, Double maxPrice, String keyword) {
+    public List<Product> getFilteredProducts(Double minPrice, Double maxPrice, String keyword,String categoryId) {
         try {
-            return productRepository.findFilteredProducts(minPrice, maxPrice, keyword);
+
+            List<Product> products = productRepository.findFilteredProducts(minPrice, maxPrice, keyword);
+            System.out.println(categoryId);
+            if(!categoryId.isBlank()) {
+                Optional<Category> category = categoryRepository.findById(categoryId);
+                if (category.isEmpty()) {
+                    throw new BaseException(HttpStatus.NOT_FOUND, "Category not found");
+                }
+
+
+                products = products.stream().filter(product -> product.getCategory().getId().equals(categoryId)).toList();
+            }
+
+            return products;
+
         } catch (Exception exception) {
             logger.error("getFilteredProducts - {}", exception.getMessage());
             throw exception;
@@ -428,6 +456,49 @@ public class ProductService {
             throw exception;
         }
     }
+
+
+    public List<Category> getAllCategories() {
+        try {
+            return categoryRepository.findAll();
+
+        } catch (Exception exception) {
+            logger.error(" getAllCategories - {}", exception.getMessage());
+            throw exception;
+        }
+    }
+
+    public Product addReview(String id, AddReviewBody addReviewBody, int userId) {
+        try {
+            Optional<Product> productDetails = productRepository.findById(id);
+            if (productDetails.isEmpty()) {
+                logger.error("addReview - Product not found");
+                throw new BaseException(HttpStatus.NOT_FOUND, "Product not found");
+            }
+
+            Product product = productDetails.get();
+
+            Product.Review review = new Product.Review();
+            review.setUserId(userId);
+            review.setRating(addReviewBody.getRating());
+            review.setDescription(addReviewBody.getDescription());
+
+            List<Product.Review> reviews = product.getReviews();
+            reviews.add(review);
+            product.setReviews(reviews);
+
+            productRepository.save(product);
+
+            return product;
+
+
+
+        } catch (Exception exception) {
+            logger.error("addReview - {}", exception.getMessage());
+            throw exception;
+        }
+    }
+
 
 
 }

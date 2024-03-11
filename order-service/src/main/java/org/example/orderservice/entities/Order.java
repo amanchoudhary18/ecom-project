@@ -3,6 +3,7 @@ package org.example.orderservice.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,10 @@ public class Order {
 
     @NotNull(message = "User id field cannot be empty")
     private int userId;
+
+    @NotNull(message = "Total price should not be empty")
+    @Positive(message = "Total price should be positive")
+    private double totalPrice;
 
     private LocalDateTime orderDate;
 

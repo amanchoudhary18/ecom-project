@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -23,6 +24,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 
 
 @Service
@@ -47,21 +49,16 @@ public class OrderService {
     // function to extract token from cookies
     public String extractTokenFromRequest(HttpServletRequest request) {
         try {
-            Cookie[] cookies = request.getCookies();
+            String authHeader = request.getHeader("Authorization");
             String authToken = null;
 
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("auth_token".equals(cookie.getName())) {
-                        authToken = cookie.getValue();
-                        break;
-                    }
-                }
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                authToken = authHeader.replace("Bearer ", "");
             }
 
             if (authToken == null) {
-                logger.error("extractTokenFromRequest : error while extracting token - Authentication token not present in cookie");
-                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication token not found in cookie.");
+                logger.error("extractTokenFromRequest : error while extracting token - Authentication token not present in header");
+                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication token not found in header.");
             }
 
             return authToken;
@@ -192,7 +189,11 @@ public class OrderService {
             order.setOrderStatus(OrderStatus.PLACED);
             order.setPaymentStatus(PaymentStatus.PAID);
             order.setOrderDate(LocalDateTime.now());
+            order.setTotalPrice(0.01);
+
             orderRepository.save(order);
+
+            double totalPrice = 0.0;
 
             for (OrderItemRequestBody orderItemRequest : orderRequestBody.getOrderItemList()) {
                 OrderItem orderItem = new OrderItem();
@@ -214,6 +215,9 @@ public class OrderService {
                 orderItem.setQuantity(orderItemRequest.getQuantity());
                 orderItem.setPrice(productDetails.getPrice());
                 orderItem.setOrder(order);
+                orderItem.setSize(orderItemRequest.getSize());
+
+                totalPrice+=productDetails.getPrice();
 
 
                 // save order item
@@ -225,6 +229,8 @@ public class OrderService {
 
 
             }
+            order.setTotalPrice(totalPrice*1.1);
+            orderRepository.save(order);
         } catch (BaseException exception) {
             throw exception;
         } catch (Exception exception) {

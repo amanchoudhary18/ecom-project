@@ -3,6 +3,7 @@ package org.example.productservice.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.example.productservice.dto.AddReviewBody;
 import org.example.productservice.dto.CategoryUpdateBody;
 import org.example.productservice.dto.ProductDetailsForOrder;
 import org.example.productservice.dto.ProductUpdateBody;
@@ -21,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+@CrossOrigin("*")
 @RestController
 @Validated
 @RequestMapping(value = "/products")
@@ -157,8 +160,13 @@ public class ProductController {
                 keyword = "";
             }
 
+            if (categoryId == null) {
+                categoryId = "";
+            }
+
+
             List<Product> filteredProducts = productService.getFilteredProducts(
-                    minPrice, maxPrice, keyword);
+                    minPrice, maxPrice, keyword,categoryId);
 
             return ResponseEntity.ok(filteredProducts);
         } catch (Exception exception) {
@@ -179,6 +187,24 @@ public class ProductController {
             return new ResponseEntity<>(products, HttpStatus.OK);
         } catch (Exception exception) {
             logger.error("getProductsByCategory - {}", exception.getMessage());
+            throw exception;
+        }
+
+    }
+
+
+    //get all categories
+
+    @GetMapping("/categories")
+    @ResponseBody
+    public ResponseEntity<Object> getAllCategories() {
+
+        try {
+            List<Category> categories = productService.getAllCategories();
+
+            return new ResponseEntity<>(categories, HttpStatus.OK);
+        } catch (Exception exception) {
+            logger.error("getAllCategory - {}", exception.getMessage());
             throw exception;
         }
 
@@ -321,6 +347,29 @@ public class ProductController {
             logger.error("deleteCategoryById - {}", exception.getMessage());
             throw exception;
         }
+    }
+
+    // Add Review
+    @PostMapping("/product/{id}/review")
+    public ResponseEntity<Object> addReview(@PathVariable @NotBlank String id, @Valid @RequestBody AddReviewBody addReviewBody, HttpServletRequest request) {
+
+        try {
+            String token = productService.extractTokenFromRequest(request);
+            int userId = productService.getUserIdFromToken(token);
+
+
+            Product product = productService.addReview(id,addReviewBody,userId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Review added successfully");
+            response.put("product",product);
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception exception) {
+            logger.error("addReview - {}", exception.getMessage());
+            throw exception;
+        }
+
     }
 
 

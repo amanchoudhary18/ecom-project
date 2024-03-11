@@ -40,21 +40,16 @@ public class CartService {
 
     public String extractTokenFromRequest(HttpServletRequest request) {
         try {
-            Cookie[] cookies = request.getCookies();
+            String authHeader = request.getHeader("Authorization");
             String authToken = null;
 
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("auth_token".equals(cookie.getName())) {
-                        authToken = cookie.getValue();
-                        break;
-                    }
-                }
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                authToken = authHeader.replace("Bearer ", "");
             }
 
             if (authToken == null) {
-                logger.error("extractTokenFromRequest : error while extracting token - Authentication token not present in cookie");
-                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication token not found in cookie.");
+                logger.error("extractTokenFromRequest : error while extracting token - Authentication token not present in header");
+                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication token not found in header.");
             }
 
             return authToken;
@@ -93,7 +88,7 @@ public class CartService {
                     .orElseGet(() -> createNewCart(userId));
 
 
-            Optional<CartItem> existingCartItem = cartItemRepository.findByCartAndProduct(cart.getId(), addToCartBody.getProductId());
+            Optional<CartItem> existingCartItem = cartItemRepository.findByCartAndProductAndSize(cart.getId(), addToCartBody.getProductId(),addToCartBody.getSize());
 
             Product product = getProductDetails(addToCartBody.getProductId());
 
@@ -112,6 +107,8 @@ public class CartService {
                 CartItem newCartItem = new CartItem();
                 newCartItem.setQuantity(addToCartBody.getQuantity());
                 newCartItem.setProductId(addToCartBody.getProductId());
+                newCartItem.setSize(addToCartBody.getSize());
+
                 newCartItem.setCart(cart);
 
                 cartItemRepository.save(newCartItem);
@@ -155,7 +152,7 @@ public class CartService {
                     .orElseGet(() -> createNewCart(userId));
 
 
-            Optional<CartItem> existingCartItem = cartItemRepository.findByCartAndProduct(cart.getId(), addToCartBody.getProductId());
+            Optional<CartItem> existingCartItem = cartItemRepository.findByCartAndProductAndSize(cart.getId(), addToCartBody.getProductId(),addToCartBody.getSize());
 
             if (existingCartItem.isPresent() && existingCartItem.get().getQuantity() >= addToCartBody.getQuantity()) {
                 CartItem cartItem = existingCartItem.get();

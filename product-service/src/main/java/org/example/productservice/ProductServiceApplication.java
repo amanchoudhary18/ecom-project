@@ -6,8 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import(CustomizedResponseEntityExceptionHandler.class)
-
 public class ProductServiceApplication {
 
     public static void main(String[] args) {

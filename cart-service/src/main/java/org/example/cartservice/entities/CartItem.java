@@ -17,6 +17,9 @@ public class CartItem {
     @NotNull(message = "Product field cannot be null")
     private String productId;
 
+    @NotNull(message = "Size field cannot be null")
+    private String size;
+
     @NotNull(message = "Quantity field cannot be null")
     @Min(value = 1, message = "Quantity should not be less than 1")
     private int quantity;

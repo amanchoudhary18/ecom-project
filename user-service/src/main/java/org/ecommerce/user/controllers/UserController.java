@@ -1,6 +1,5 @@
 package org.ecommerce.user.controllers;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -25,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
+@CrossOrigin("*")
 @RestController
 @Validated
 @RequestMapping("/users")
@@ -70,10 +71,10 @@ public class UserController {
             String token = userService.extractTokenFromRequest(request);
             User user = userService.getUserDataFromToken(token);
 
-            if (!user.getRole().equals(Role.ADMIN)) {
-                logger.error("retrieve user by id : this api can only be accessed by ADMIN");
-                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication Error : Cannot be accessed");
-            }
+//            if (!user.getRole().equals(Role.ADMIN)) {
+//                logger.error("retrieve user by id : this api can only be accessed by ADMIN");
+//                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication Error : Cannot be accessed");
+//            }
 
 
             User userDetails = userService.retrieveUserById(userId);
@@ -100,7 +101,8 @@ public class UserController {
 
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User details fetched successfully");
-            response.put("user", new UserResponseBody(userData.getEmail(), userData.getRole(), userData.getName(), userData.getId(), userData.getAddresses()));
+            response.put("user",new UserResponseBody(userData.getEmail(), userData.getRole(), userData.getName(), userData.getId(), userData.getAddresses(),userData.getImgLink(),userData.getPaymentMethods()));
+
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception exception) {
@@ -116,7 +118,7 @@ public class UserController {
 
         try {
             User userData = userService.createUser(user);
-            UserResponseBody savedUser = new UserResponseBody(userData.getEmail(), userData.getRole(), userData.getName(), userData.getId(), userData.getAddresses());
+            UserResponseBody savedUser = new UserResponseBody(userData.getEmail(), userData.getRole(), userData.getName(), userData.getId(), userData.getAddresses(),userData.getImgLink(),userData.getPaymentMethods());
 
 
             // Include the token in the response body
@@ -139,8 +141,7 @@ public class UserController {
         try {
             User userData = userService.loginUser(requestBody);
 
-            UserResponseBody user = new UserResponseBody(userData.getEmail(), userData.getRole(), userData.getName(), userData.getId(), userData.getAddresses());
-
+            UserResponseBody user = new UserResponseBody(userData.getEmail(), userData.getRole(), userData.getName(), userData.getId(), userData.getAddresses(),userData.getImgLink(),userData.getPaymentMethods());
 
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("message", "User logged in successfully");
@@ -148,12 +149,7 @@ public class UserController {
 
             // Include the token in cookies
             String token = JwtTokenUtil.generateToken(user);
-            Cookie cookie = new Cookie("auth_token", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
+            responseBody.put("token", token);
 
             return ResponseEntity.ok(responseBody);
         } catch (Exception exception) {
@@ -213,7 +209,31 @@ public class UserController {
 
     }
 
+    // Delete user by id
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Object> deleteUserById(HttpServletRequest request,@PathVariable int userId) {
+        try {
+            String token = userService.extractTokenFromRequest(request);
+            User user = userService.getUserDataFromToken(token);
+            if (!user.getRole().equals(Role.ADMIN)) {
+                logger.error("updateUser : this api can only be accessed by ADMIN");
+                throw new BaseException(HttpStatus.UNAUTHORIZED, "Authentication Error : Cannot be accessed");
+            }
+
+            userService.deleteUser(userId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "User account deleted successfully.");
+
+            return ResponseEntity.ok(response);
+        } catch (Exception exception) {
+            logger.error("deleteUser : error while deleting user data - {}", exception.getMessage());
+            throw exception;
+        }
+
+    }
+
     // Delete my account
+
     @DeleteMapping("")
     public ResponseEntity<Object> deleteUser(HttpServletRequest request) {
         try {
@@ -262,7 +282,7 @@ public class UserController {
             Address savedAddress = userService.createAddressForUser(user.getId(), address);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Addresses added successfully");
+            response.put("message", "Address added successfully");
             response.put("address", savedAddress);
 
 
