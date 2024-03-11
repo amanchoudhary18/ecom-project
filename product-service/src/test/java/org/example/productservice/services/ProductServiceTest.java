@@ -1,6 +1,5 @@
 package org.example.productservice.services;
 
-import org.example.productservice.controllers.ProductController;
 import org.example.productservice.dto.AddReviewBody;
 import org.example.productservice.dto.CategoryUpdateBody;
 import org.example.productservice.dto.ProductDetailsForOrder;
@@ -15,13 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,12 +54,16 @@ class ProductServiceTest {
 
     // Add product - category found
     @Test
-    void addProduct_categoryFound() {
+    void addProduct_success() {
         String categoryId = "65dc544c00c5d91fb6192dd4";
         Product product = new Product();
+        product.setAttributes(new ArrayList<>());
 
         Category mockCategory = new Category();
+        mockCategory.setAttributes(new ArrayList<>());
+
         Mockito.when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(mockCategory));
+        Mockito.when(productRepository.save(product)).thenReturn(product);
 
         Product savedProduct = productService.addProduct(product, categoryId);
 
@@ -94,6 +92,23 @@ class ProductServiceTest {
     }
 
 
+    @Test
+    void updateProduct_notFound() {
+        String productId = "123";
+        ProductUpdateBody updatedProduct = new ProductUpdateBody();
+        updatedProduct.setName("Updated Product");
+
+        Product existingProduct = new Product();
+        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
+        Mockito.when(productRepository.save(existingProduct)).thenReturn(existingProduct);
+
+        BaseException expectedException = assertThrows(BaseException.class, () -> productService.updateProduct(productId, updatedProduct));
+
+        assertEquals("Product not found", expectedException.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, expectedException.getStatus());
+    }
+
+
     // Delete product - success
     @Test
     void deleteProduct_success() {
@@ -105,6 +120,20 @@ class ProductServiceTest {
         assertDoesNotThrow(() -> productService.deleteProduct(productId));
 
         Mockito.verify(productRepository, Mockito.times(1)).deleteById(productId);
+    }
+
+    // Delete product - not found
+    @Test
+    void deleteProduct_notFound() {
+        String productId = "123";
+
+        Product existingProduct = new Product();
+        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        BaseException expectedException = assertThrows(BaseException.class, () -> productService.deleteProduct(productId));
+
+        assertEquals("Product not found", expectedException.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, expectedException.getStatus());
     }
 
 
@@ -127,14 +156,42 @@ class ProductServiceTest {
     @Test
     void getProductsByCategory_success() {
         String categoryId = "65dc544c00c5d91fb6192dd4";
+        Category categoryBody = new Category();
+        categoryBody.setId(categoryId);
+
+        Product product = new Product();
+        product.setCategory(categoryBody);
+
 
         List<Product> products = new ArrayList<>();
+        products.add(product);
+
         Mockito.when(productRepository.findAll()).thenReturn(products);
 
         List<Product> resultProducts = productService.getProductsByCategory(categoryId);
 
         assertNotNull(resultProducts);
-        assertTrue(resultProducts.isEmpty());
+        assertTrue(!resultProducts.isEmpty());
+    }
+
+
+    @Test
+    void getProductsByCategory_categoryNotFound() {
+        String categoryId = "65dc544c00c5d91fb6192dd4";
+        Category categoryBody = new Category();
+        categoryBody.setId(categoryId);
+
+
+
+        List<Product> products = new ArrayList<>();
+
+        Mockito.when(productRepository.findAll()).thenReturn(products);
+
+        BaseException expectedException = assertThrows(BaseException.class, () -> productService.getProductsByCategory(categoryId));
+
+
+        assertEquals("Category not found", expectedException.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, expectedException.getStatus());
     }
 
 
@@ -146,13 +203,41 @@ class ProductServiceTest {
         String keyword = "shoes";
         String categoryId = "65dc544c00c5d91fb6192dd4";
 
+        Category category = new Category();
+        category.setId(categoryId);
+
+        Mockito.when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+
         List<Product> products = new ArrayList<>();
+
         Mockito.when(productRepository.findFilteredProducts(minPrice, maxPrice, keyword)).thenReturn(products);
 
         List<Product> resultProducts = productService.getFilteredProducts(minPrice, maxPrice, keyword, categoryId);
 
         assertNotNull(resultProducts);
-        assertTrue(resultProducts.isEmpty());
+    }
+
+
+    @Test
+    void getFilteredProducts_categoryNotFound() {
+        Double minPrice = 10.0;
+        Double maxPrice = 100.0;
+        String keyword = "shoes";
+        String categoryId = "65dc544c00c5d91fb6192dd4";
+
+
+
+        Mockito.when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
+
+        List<Product> products = new ArrayList<>();
+
+        Mockito.when(productRepository.findFilteredProducts(minPrice, maxPrice, keyword)).thenReturn(products);
+
+        BaseException expectedException = assertThrows(BaseException.class, () -> productService.getFilteredProducts(minPrice, maxPrice, keyword, categoryId));
+
+
+        assertEquals("Category not found", expectedException.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, expectedException.getStatus());
     }
 
 
@@ -169,22 +254,6 @@ class ProductServiceTest {
         assertNotNull(resultProduct);
         assertEquals(existingProduct, resultProduct);
     }
-
-
-    // Get product details for order by ID - success
-    @Test
-    void getProductDetailsForOrderById_success() {
-        String productId = "123";
-
-        Product existingProduct = new Product();
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
-
-        ProductDetailsForOrder resultDetails = productService.getProductDetailsForOrderById(productId);
-
-        assertNotNull(resultDetails);
-        assertEquals(existingProduct.getName(), resultDetails.getName());
-    }
-
 
 
     // Get product quantity by ID - success

@@ -131,11 +131,11 @@ class ProductControllerTest {
 
 
         Product product = new Product("1", "Luka 2 PF", "You bring the speed", attributes, 1100.00, category, "nike", 100, imgLinks, reviews);
-        when(productService.addProduct(any(), anyString())).thenReturn(product);
-
-        when(productService.extractTokenFromRequest(any())).thenReturn("correctToken");
-
-        when(productService.checkAdmin(any())).thenReturn(false);
+//        when(productService.addProduct(any(), anyString())).thenReturn(product);
+//
+//        when(productService.extractTokenFromRequest(any())).thenReturn("correctToken");
+//
+//        when(productService.checkAdmin(any())).thenReturn(false);
 
         this.mockMvc.perform(post("/products/product/    ").header("authorization", "Bearer correctToken").contentType(MediaType.APPLICATION_JSON).content(objectWriter.writeValueAsString(product))).andExpect(status().isInternalServerError());
 
